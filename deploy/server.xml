@@ -22,6 +22,8 @@
 	
     <dataSource id="db2" jndiName="jdbc/mydbdatasource">
     	<jdbcDriver libraryRef="DB2JCC4Lib"/>
+    	<!--  Modify as per your DB2 configuration -->
+    	<properties.db2.jcc databaseName="dbname" portNumber="dbport" serverName="dbhost"/>
 	</dataSource>
 
     <webApplication id="phonebookdemo" location="phonebookdemo.war" name="phonebookdemo"/>
