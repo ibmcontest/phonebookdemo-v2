@@ -1,0 +1,28 @@
+<server description="Phonebook Demo Server">
+
+    <!-- Enable features -->
+    <featureManager>
+        <feature>jsp-2.3</feature>
+        <feature>jdbc-4.1</feature>
+        <feature>jaxrs-2.0</feature>
+        <feature>localConnector-1.0</feature>
+        <feature>jpa-2.1</feature>
+    </featureManager>
+
+    <!-- To access this server from a remote client add a host attribute to the following element, e.g. host="*" -->
+    <httpEndpoint httpPort="9080" httpsPort="9443" id="defaultHttpEndpoint"/>
+
+    <applicationMonitor updateTrigger="mbean"/>
+    
+    <!--  Change the location of db2jcc4.jar as per your installation -->
+    <variable name="DB2_JDBC_DRIVER_PATH" value="C:/db2"/>
+    <library id="DB2JCC4Lib">
+    	<fileset dir="${DB2_JDBC_DRIVER_PATH}" includes="db2jcc4.jar"/>
+	</library>
+	
+    <dataSource id="db2" jndiName="jdbc/mydbdatasource">
+    	<jdbcDriver libraryRef="DB2JCC4Lib"/>
+	</dataSource>
+
+    <webApplication id="phonebookdemo" location="phonebookdemo.war" name="phonebookdemo"/>
+</server>

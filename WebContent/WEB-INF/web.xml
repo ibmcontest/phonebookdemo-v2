@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
+  <display-name>Phonebook App</display-name>
+ <servlet>
+    <servlet-name>com.ibmcloud.contest.phonebook.ApplicationConfig</servlet-name>
+    <load-on-startup>1</load-on-startup>
+    <enabled>true</enabled>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>com.ibmcloud.contest.phonebook.ApplicationConfig</servlet-name>
+    <url-pattern>/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+		<servlet-name>DefaultJaxrsConfig</servlet-name>
+		<servlet-class>io.swagger.jaxrs.config.DefaultJaxrsConfig</servlet-class>
+		<init-param>
+			<param-name>api.version</param-name>
+			<param-value>1.0.0</param-value>
+		</init-param>
+	    <init-param>
+	      <param-name>swagger.api.basepath</param-name>
+	      <param-value>api</param-value>
+	    </init-param>
+	    <init-param>
+	    	<param-name>swagger.api.title</param-name>
+	    	<param-value>phonebook</param-value>
+	    </init-param>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+  <persistence-context-ref>
+    <persistence-context-ref-name>openjpa-phonebook/entitymanager</persistence-context-ref-name>
+    <persistence-unit-name>openjpa-phonebook</persistence-unit-name>
+  </persistence-context-ref>
+  <resource-ref>
+    <res-ref-name>jdbc/mydbdatasource</res-ref-name>
+    <res-type>javax.sql.DataSource</res-type>
+    <res-auth>Container</res-auth>
+    <res-sharing-scope>Shareable</res-sharing-scope>
+  </resource-ref>
+</web-app>
