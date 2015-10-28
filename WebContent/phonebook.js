@@ -27,8 +27,13 @@ app.controller('PhonebookList', function($scope, $http, $location) {
 	});
 	
 	$scope.remove = function (_id, _index) {
-		$http['delete']('api/phonebook/'+ _id);
-		 $scope.entries.splice(_index, 1);
+		
+		var confirmation = confirm("Delete this entry?");
+		if (confirmation == true) {
+			$http['delete']('api/phonebook/'+ _id);
+			$scope.entries.splice(_index, 1);
+		}
+		
 	};
 
 });
