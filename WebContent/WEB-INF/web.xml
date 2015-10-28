@@ -8,7 +8,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>com.ibmcloud.contest.phonebook.ApplicationConfig</servlet-name>
-    <url-pattern>/*</url-pattern>
+    <url-pattern>/api/*</url-pattern>
   </servlet-mapping>
   <servlet>
 		<servlet-name>DefaultJaxrsConfig</servlet-name>
