@@ -14,7 +14,7 @@
     <td>{{entry.lastName}}</td>
     <td>{{entry.phoneNumber}}</td>
     <td><a ng-href="#/edit/{{entry.id}}"><i class="glyphicon glyphicon-pencil"></i></a></td>
-    <td><a ng-click="remove(entry.id, index); removeRow()"><i class="glyphicon glyphicon-remove-sign"></i></a></td>
+    <td><a ng-click="remove(entry.id, index); removeRow()" style="cursor: pointer"><i class="glyphicon glyphicon-remove-sign"></i></a></td>
   </tr>
   <tr>
   <td><a href="#/add" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-plus style="vertical-align:middle"></span>New Entry</a></tr>
