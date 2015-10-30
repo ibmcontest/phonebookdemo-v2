@@ -120,7 +120,7 @@ public class PhonebookServiceHandler {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Adds entry to phonebook")
-    @ApiResponses(value = { @ApiResponse(code = 201, message = "Created successfully"),
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "Created successfully"),
             @ApiResponse(code = 500, message = "Internal error") })
     public PhonebookEntry create(final PhonebookEntry entry) {
         try {
@@ -148,7 +148,7 @@ public class PhonebookServiceHandler {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Updates an existing entry in the phonebook")
-    @ApiResponses(value = { @ApiResponse(code = 204, message = "OK"),
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 404, message = "Entry not found for given ID"),
             @ApiResponse(code = 500, message = "Internal error") })
     public PhonebookEntry update(@PathParam("id") final String id, final PhonebookEntry entry) {
