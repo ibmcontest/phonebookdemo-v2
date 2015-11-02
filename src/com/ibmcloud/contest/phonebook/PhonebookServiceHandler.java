@@ -19,6 +19,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import javax.naming.InitialContext;
@@ -120,14 +121,15 @@ public class PhonebookServiceHandler {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Adds entry to phonebook")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Created successfully"),
+    @ApiResponses(value = { @ApiResponse(code = 201, message = "Created successfully"),
             @ApiResponse(code = 500, message = "Internal error") })
-    public PhonebookEntry create(final PhonebookEntry entry) {
+    public Response create(final PhonebookEntry entry) {
         try {
             utx.begin();
             em.persist(entry);
             utx.commit();
-            return entry;
+            final URI uri = new URI("/api/phonebook/" + entry.getId());
+            return Response.created(uri).build();
         } catch (final Exception e) {
             e.printStackTrace();
             throw new WebApplicationException();
@@ -148,10 +150,10 @@ public class PhonebookServiceHandler {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Updates an existing entry in the phonebook")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+    @ApiResponses(value = { @ApiResponse(code = 204, message = "OK"),
             @ApiResponse(code = 404, message = "Entry not found for given ID"),
             @ApiResponse(code = 500, message = "Internal error") })
-    public PhonebookEntry update(@PathParam("id") final String id, final PhonebookEntry entry) {
+    public Response update(@PathParam("id") final String id, final PhonebookEntry entry) {
         final Long queryId = Long.parseLong(id);
 
         try {
@@ -166,7 +168,7 @@ public class PhonebookServiceHandler {
             dbEntry.setPhoneNumber(entry.getPhoneNumber());
             em.merge(dbEntry);
             utx.commit();
-            return dbEntry;
+            return Response.noContent().build();
         } catch (final Exception e) {
             e.printStackTrace();
             throw new WebApplicationException();
@@ -177,7 +179,7 @@ public class PhonebookServiceHandler {
     @DELETE
     @Path("{id}")
     @ApiOperation(value = "Deletes an existing entry from the phonebook")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+    @ApiResponses(value = { @ApiResponse(code = 204, message = "OK"),
             @ApiResponse(code = 404, message = "Entry not found for given ID"),
             @ApiResponse(code = 500, message = "Internal error") })
     public Response deleteEntry(@PathParam("id") final String id) {
@@ -191,7 +193,7 @@ public class PhonebookServiceHandler {
             }
             em.remove(dbEntry);
             utx.commit();
-            return Response.ok().build();
+            return Response.noContent().build();
         } catch (final Exception e) {
             e.printStackTrace();
             throw new WebApplicationException();
