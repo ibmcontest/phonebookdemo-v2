@@ -2,7 +2,6 @@ angular.module('phonebook', [])
 
 .controller('PhonebookList', function($scope, $http, $location) {
 
-	console.log("list");
 	var id = 0;
 	$scope.entry = {title : "", firstName : "", lastName : "", phoneNumber : ""};
 
@@ -24,13 +23,11 @@ angular.module('phonebook', [])
 
 	$scope.setId = function(_id) {
 
-		console.log("setid");
 		id = _id;
 	};
 
 	$scope.remove = function() {
 
-		console.log("remove");
 		$http['delete']('api/phonebook/' + id).then(function(data) {
 			location.reload();
 		});
