@@ -69,15 +69,13 @@
 				<div class="modal-content">
 					<div class="modal-body">
 						<form class="form-vertical" name="editForm" role="form">
-
 							<div class="form-group"
 								ng-class="{error: editForm.title.$invalid && !editForm.title.$pristine}">
 								<label for="title">Title</label> <input type="text" name="title"
 									ng-model="entry.title" class="form-control" id="title" required>
 								<span
 									ng-show="editForm.title.$error.required && !editForm.title.$pristine"
-									class="help-inline"> Required
-									{{editForm.title.$pristine}}</span>
+									class="help-inline"> Required</span>
 							</div>
 
 							<div class="form-group"
@@ -86,8 +84,7 @@
 									ng-model="entry.firstName" class="form-control" required>
 								<span
 									ng-show="editForm.firstName.$error.required && !editForm.firstName.$pristine"
-									class="help-inline"> Required
-									{{editForm.firstName.$pristine}}</span>
+									class="help-inline"> Required</span>
 							</div>
 
 							<div class="form-group"
@@ -96,8 +93,7 @@
 									ng-model="entry.lastName" class="form-control" required>
 								<span
 									ng-show="editForm.lastName.$error.required && !editForm.lastName.$pristine"
-									class="help-inline"> Required
-									{{editForm.lastName.$pristine}}</span>
+									class="help-inline"> Required</span>
 							</div>
 
 							<div class="form-group"
@@ -106,13 +102,12 @@
 									name="phoneNumber" ng-model="entry.phoneNumber"
 									class="form-control" required> <span
 									ng-show="editForm.phoneNumber.$error.required && !editForm.phoneNumber.$pristine"
-									class="help-inline"> Required
-									{{editForm.phoneNumber.$pristine}}</span>
+									class="help-inline"> Required</span>
 							</div>
 						</form>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-primary" data-dismiss="modal"
+						<button type="button" class="btn btn-primary" data-dismiss="modal" ng-disabled="editForm.$invalid"
 							ng-click="submit()">Submit</button>
 						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 					</div>
