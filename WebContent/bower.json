@@ -1,0 +1,11 @@
+{
+  "name": "phonebookdemo",
+  "version": "1.0.0",
+  "main": "index.html",
+  "dependencies": {
+    "angular": "1.4.1",
+    "angular-mocks": "1.4.1",
+    "bootstrap": "3.3.5",
+    "jquery": "2.1.4"
+  }
+}
