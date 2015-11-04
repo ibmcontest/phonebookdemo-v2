@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,10 +15,6 @@
  */
 package com.ibmcloud.contest.phonebook;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +37,14 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 @Path("phonebook")
 @Api(value = "/phonebook")
@@ -51,6 +53,8 @@ import javax.ws.rs.core.Response;
  *
  */
 public class PhonebookServiceHandler {
+    @Context
+    UriInfo uriInfo;
 
     private final UserTransaction utx;
     private final EntityManager em;
@@ -68,8 +72,8 @@ public class PhonebookServiceHandler {
     public PhonebookEntries queryPhonebook(@QueryParam("title") final String title,
             @QueryParam("firstname") final String firstname, @QueryParam("lastname") final String lastname) {
 
-        final List<PhonebookEntry> checkList = em.createQuery(
-                "SELECT t FROM PhonebookEntry t", PhonebookEntry.class) //$NON-NLS-1$
+        final List<PhonebookEntry> checkList = em
+                .createQuery("SELECT t FROM PhonebookEntry t", PhonebookEntry.class) //$NON-NLS-1$
                 .getResultList();
         if (checkList.size() == 0) {
             createSampleData();
@@ -119,7 +123,6 @@ public class PhonebookServiceHandler {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Adds entry to phonebook")
     @ApiResponses(value = { @ApiResponse(code = 201, message = "Created successfully"),
             @ApiResponse(code = 500, message = "Internal error") })
@@ -128,7 +131,11 @@ public class PhonebookServiceHandler {
             utx.begin();
             em.persist(entry);
             utx.commit();
-            final URI uri = new URI("/api/phonebook/" + entry.getId());
+
+            // Remove host and scheme and add the entry ID to path
+            final URI uri = uriInfo.getAbsolutePathBuilder().scheme(null).host(null)
+                    .path(String.valueOf(entry.getId())).build();
+
             return Response.created(uri).build();
         } catch (final Exception e) {
             e.printStackTrace();
@@ -148,7 +155,6 @@ public class PhonebookServiceHandler {
     @PUT
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Updates an existing entry in the phonebook")
     @ApiResponses(value = { @ApiResponse(code = 204, message = "OK"),
             @ApiResponse(code = 404, message = "Entry not found for given ID"),
