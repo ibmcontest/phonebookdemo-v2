@@ -10,19 +10,10 @@
 		<class>com.ibmcloud.contest.phonebook.PhonebookEntry</class>
 		<properties>
 		
-			<!--  To deploy locally on Liberty
-			      1. copy deploy/server.xml into your liberty server.
-			      2. fill out the following persistence property names
-			      3. If using MYSQL, append "?relaxAutoCommit=true" to thr url.
-			         For example:
-			         <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/db?relaxAutoCommit=true" />
-			-->
-			<!-- UNCOMMENT this to deploy locally 
 			<property name="javax.persistence.jdbc.driver" value="com.ibm.DB2.jcc.DB2Driver" />
-        	<property name="javax.persistence.jdbc.url" value="jdbc:db2://hostname:port/dbname" />
-        	<property name="javax.persistence.jdbc.user" value="dbuser" />
-        	<property name="javax.persistence.jdbc.password" value="dbpassword" />
-			-->
+        	<property name="javax.persistence.jdbc.url" value="jdbc:db2://75.126.155.153:50000/SQLDB" />
+        	<property name="javax.persistence.jdbc.user" value="user03595" />
+        	<property name="javax.persistence.jdbc.password" value="miUw7ufSp8ud" />
 			
 			<!-- allow table definitions/creation on-the-fly jpa-2.0 feature -->
 			<property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)" />

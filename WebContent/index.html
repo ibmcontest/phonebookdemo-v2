@@ -1,22 +1,25 @@
 <!doctype html>
 <html ng-app="phonebook">
 <head>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-resource.min.js"></script>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-route.min.js"></script>
-<script type="text/javascript" src="jquery-1.11.3.min.js"></script>
-<script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="phonebook.js"></script>
-<link rel="stylesheet" type="text/css"
-	href="bootstrap/css/bootstrap.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.1/angular.min.js"></script>
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	
+	<!-- comment above, and uncomment this block to use bower repository -->
+	<!-- 	
+	<script src="bower_components/angular/angular.min.js"></script>
+	<script src="bower_components/jquery/dist/jquery.min.js"></script>
+	<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+	-->
+
+	<script src="phonebook.js"></script>	
 </head>
 <body>
-	<center>
+	<div style="text-align: center">
 		<h2>Phonebook</h2>
-	</center>
+	</div>
 	<a href="https://github.com/ibmcontest/phonebookdemo"><img
 		style="position: absolute; top: 0; left: 0; border: 0;"
 		src="https://camo.githubusercontent.com/121cd7cbdc3e4855075ea8b558508b91ac463ac2/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f677265656e5f3030373230302e706e67"
@@ -68,14 +71,13 @@
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 					<div class="modal-body">
-						<form class="form-vertical" name="editForm" role="form">
+						<form name="editForm" role="form">
 							<div class="form-group"
 								ng-class="{error: editForm.title.$invalid && !editForm.title.$pristine}">
 								<label for="title">Title</label> <input type="text" name="title"
 									ng-model="entry.title" class="form-control" id="title" required>
 								<span
-									ng-show="editForm.title.$error.required && !editForm.title.$pristine"
-									class="help-inline"> Required</span>
+									ng-show="editForm.title.$error.required && !editForm.title.$pristine"> Required</span>
 							</div>
 
 							<div class="form-group"
@@ -83,8 +85,7 @@
 								<label>First Name</label> <input type="text" name="firstName"
 									ng-model="entry.firstName" class="form-control" required>
 								<span
-									ng-show="editForm.firstName.$error.required && !editForm.firstName.$pristine"
-									class="help-inline"> Required</span>
+									ng-show="editForm.firstName.$error.required && !editForm.firstName.$pristine"> Required</span>
 							</div>
 
 							<div class="form-group"
@@ -92,8 +93,7 @@
 								<label>Last Name</label> <input type="text" name="lastName"
 									ng-model="entry.lastName" class="form-control" required>
 								<span
-									ng-show="editForm.lastName.$error.required && !editForm.lastName.$pristine"
-									class="help-inline"> Required</span>
+									ng-show="editForm.lastName.$error.required && !editForm.lastName.$pristine"> Required</span>
 							</div>
 
 							<div class="form-group"
@@ -101,8 +101,7 @@
 								<label>Phone Number</label> <input type="text"
 									name="phoneNumber" ng-model="entry.phoneNumber"
 									class="form-control" required> <span
-									ng-show="editForm.phoneNumber.$error.required && !editForm.phoneNumber.$pristine"
-									class="help-inline"> Required</span>
+									ng-show="editForm.phoneNumber.$error.required && !editForm.phoneNumber.$pristine"> Required</span>
 							</div>
 						</form>
 					</div>
