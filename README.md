@@ -10,6 +10,9 @@ Once deployed, the list of endpoints can be found in the following documentation
 You'll need a [Bluemix][1] account, and then [deploy this application to Bluemix][2]
 
 ## Deploying locally
+* Make sure Node.js is installed (to get ```npm```)
+* Make sure bower is installed (```npm install -g bower```)
+* run ```npm install``` in the root of project directory
 * Set up a DB2 datasource
 * Modify [persistence.xml](src/META-INF/persistence.xml) and follow the comments to connect to the datasource
 * Copy [db2jcc4.jar](deploy/db2jcc4.jar) on your local machine (i.e. C:/db2)
@@ -18,3 +21,7 @@ You'll need a [Bluemix][1] account, and then [deploy this application to Bluemix
 
 [1]: http://bluemix.net
 [2]: https://hub.jazz.net/deploy/index.html?repository=https://github.com/ibmcontest/phonebookdemo
+
+## To test UI
+* Make sure gulp is installed (```npm install -g gulp```)
+* Run ```gulp test```
