@@ -15,15 +15,35 @@
       </resource>
     </resources>
     <plugins>
-	  <plugin>
-		<groupId>org.apache.maven.plugins</groupId>
-		<artifactId>maven-eclipse-plugin</artifactId>
-		<version>2.9</version>
-		<configuration>
-			<wtpversion>2.0</wtpversion>
-			<wtpContextName>/</wtpContextName>
-		</configuration>
-	  </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>1.4.1</version>
+        <executions>
+          <execution>
+            <id>enforce-maven</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>3.1</version>
+                </requireMavenVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <version>2.9</version>
+        <configuration>
+          <wtpversion>2.0</wtpversion>
+          <wtpContextName>/</wtpContextName>
+        </configuration>
+      </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.1</version>
@@ -46,72 +66,72 @@
         <artifactId>frontend-maven-plugin</artifactId>
         <version>0.0.26</version>
         <executions>
-        	<execution>
-				<id>install node and npm</id>
-				<phase>generate-resources</phase>
-				<goals>
-					<goal>install-node-and-npm</goal>
-				</goals>
-				<configuration>
-					<nodeVersion>v0.12.2</nodeVersion>
-					<npmVersion>2.7.6</npmVersion>
-				</configuration>
-			</execution>
-			<execution>
-    			<id>npm install</id>
-    			<phase>generate-resources</phase>
-    			<goals>
-        			<goal>npm</goal>
-    			</goals>
-			    <configuration>
-			        <arguments>install</arguments>
-    			</configuration>
-			</execution>
-        	<execution>
-    			<id>bower install</id>
-    			<phase>generate-resources</phase>
-    			<goals>
-        			<goal>bower</goal>
-    			</goals>
-    			<configuration>
-		        	<arguments>install</arguments>
-    			</configuration>
-			</execution>
-			<execution>
-    			<id>Javascript unit tests</id>
-    			<phase>test</phase>
-    			<goals>
-        			<goal>gulp</goal>
-    			</goals>			    
-			    <configuration>
-			    	<arguments>test</arguments>
-    			</configuration>
-			</execution>
-		</executions>
+          <execution>
+            <id>install node and npm</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>install-node-and-npm</goal>
+            </goals>
+            <configuration>
+              <nodeVersion>v0.12.2</nodeVersion>
+              <npmVersion>2.7.6</npmVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm install</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>install</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>bower install</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>bower</goal>
+            </goals>
+            <configuration>
+              <arguments>install</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>Javascript unit tests</id>
+            <phase>test</phase>
+            <goals>
+              <goal>gulp</goal>
+            </goals>
+            <configuration>
+              <arguments>test</arguments>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
   <dependencies>
-  	<dependency>
-  		<groupId>io.swagger</groupId>
-  		<artifactId>swagger-jaxrs</artifactId>
-  		<version>1.5.3</version>
-  	</dependency>
-  	<dependency>
+    <dependency>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-jaxrs</artifactId>
+      <version>1.5.3</version>
+    </dependency>
+    <dependency>
          <groupId>org.slf4j</groupId>
          <artifactId>slf4j-simple</artifactId>
          <version>1.6.4</version>
      </dependency>
-  	<dependency>
-  		<groupId>org.eclipse.persistence</groupId>
-  		<artifactId>javax.persistence</artifactId>
-  		<version>2.0.0</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>javax.transaction</groupId>
-  		<artifactId>jta</artifactId>
-  		<version>1.1</version>
-  	</dependency>
+    <dependency>
+      <groupId>org.eclipse.persistence</groupId>
+      <artifactId>javax.persistence</artifactId>
+      <version>2.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.transaction</groupId>
+      <artifactId>jta</artifactId>
+      <version>1.1</version>
+    </dependency>
   </dependencies>
   <version>1.0</version>
 </project>
