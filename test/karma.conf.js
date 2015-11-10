@@ -39,7 +39,6 @@ module.exports = function(config){
             'WebContent/bower_components/angular-mocks/angular-mocks.js',
 
             // Test related files
-            'test/utils/**/*.js',
             'test/specs/**/*-spec.js'
         ],
 

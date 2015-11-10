@@ -1,4 +1,5 @@
 /bin
 /target/
+/node/
 /node_modules/
 WebContent/bower_components/
