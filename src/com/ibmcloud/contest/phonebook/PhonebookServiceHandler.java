@@ -64,6 +64,12 @@ public class PhonebookServiceHandler {
         em = getEm();
     }
 
+    public PhonebookServiceHandler(final UserTransaction utx, final EntityManager em, final UriInfo uriInfo) {
+        this.utx = utx;
+        this.em = em;
+        this.uriInfo = uriInfo;
+    }
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Returns list of entries matching the query")
@@ -162,12 +168,12 @@ public class PhonebookServiceHandler {
     public Response update(@PathParam("id") final String id, final PhonebookEntry entry) {
         final Long queryId = Long.parseLong(id);
 
+        final PhonebookEntry dbEntry = em.find(PhonebookEntry.class, queryId);
+        if (dbEntry == null) {
+            throw new NotFoundException();
+        }
         try {
             utx.begin();
-            final PhonebookEntry dbEntry = em.find(PhonebookEntry.class, queryId);
-            if (dbEntry == null) {
-                throw new NotFoundException();
-            }
             dbEntry.setTitle(entry.getTitle());
             dbEntry.setFirstName(entry.getFirstName());
             dbEntry.setLastName(entry.getLastName());
@@ -191,12 +197,12 @@ public class PhonebookServiceHandler {
     public Response deleteEntry(@PathParam("id") final String id) {
         final Long queryId = Long.parseLong(id);
 
+        final PhonebookEntry dbEntry = em.find(PhonebookEntry.class, queryId);
+        if (dbEntry == null) {
+            throw new NotFoundException();
+        }
         try {
             utx.begin();
-            final PhonebookEntry dbEntry = em.find(PhonebookEntry.class, queryId);
-            if (dbEntry == null) {
-                throw new NotFoundException();
-            }
             em.remove(dbEntry);
             utx.commit();
             return Response.noContent().build();
