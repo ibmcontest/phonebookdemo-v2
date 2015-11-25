@@ -41,7 +41,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import com.ibmcloud.contest.phonebook.PhonebookEntry;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -199,7 +198,7 @@ public class PhonebookServiceHandler {
         }
         try {
             utx.begin();
-            em.remove(dbEntry);
+            em.remove(em.merge(dbEntry));
             utx.commit();
             return Response.noContent().build();
         } catch (final Exception e) {

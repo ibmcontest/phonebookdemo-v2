@@ -16,154 +16,203 @@
 package com.ibmcloud.contest.phonebook;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.verify;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.List;
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Selection;
+import javax.persistence.Persistence;
 import javax.transaction.UserTransaction;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import com.ibmcloud.contest.phonebook.util.CustomUserTransaction;
 
 @SuppressWarnings("nls")
 @RunWith(MockitoJUnitRunner.class)
 public class PhonebookServiceHandlerTest {
 
-    @Mock
-    EntityManager em;
-    @Mock
-    UserTransaction utx;
-    @Mock
-    CriteriaBuilder builder;
-    @Mock
-    CriteriaQuery<PhonebookEntry> criteriaQuery;
-    @Mock
-    TypedQuery<PhonebookEntry> query;
-    @Mock
-    UriInfo uriInfo;
-    @Mock
-    UriBuilder uriBuilder;
-    @Mock
-    Root<PhonebookEntry> entryRoot;
+    private static final String DUMMYHOST = "http://dummyhost:1234/api/phonebook";
+    private static EntityManager em;
+    private static UserTransaction utx;
 
-    final long id = 1;
-    final ArgumentCaptor<PhonebookEntry> argument = ArgumentCaptor.forClass(PhonebookEntry.class);
+    @Mock
+    private UriInfo uriInfo;
+
+    private PhonebookServiceHandler phonebookServiceHandler;
+
+    @BeforeClass
+    public static void initialize() throws Exception {
+        em = Persistence.createEntityManagerFactory("phonebook-junit").createEntityManager();
+        utx = new CustomUserTransaction(em);
+    }
+
+    @AfterClass
+    public static void terminate() {
+        em.close();
+    }
+
+    @Before
+    public void beforeEach() throws Exception {
+        utx.begin();
+        em.createQuery("DELETE FROM PhonebookEntry").executeUpdate();
+        utx.commit();
+
+        // Mock out uriInfo, it's easier then implementing it, but need to know which method is being called.
+        when(uriInfo.getAbsolutePath()).thenReturn(new URI(DUMMYHOST));
+
+        phonebookServiceHandler = new PhonebookServiceHandler(utx, em, uriInfo);
+    }
+
+    private void createEntries(final List<PhonebookEntry> entries) throws Exception {
+        utx.begin();
+        for (final PhonebookEntry entry : entries) {
+            em.persist(entry);
+        }
+        em.flush();
+        utx.commit();
+    }
 
     @Test
-    public void queryPhonebook() {
+    public void initPhonebook() throws Exception {
+        when(uriInfo.getAbsolutePath()).thenReturn(new URI(DUMMYHOST));
 
-        final PhonebookEntry entry = new PhonebookEntry("Mr", "John", "Doe", "12345");
-        when(em.getCriteriaBuilder()).thenReturn(builder);
-        when(builder.createQuery(PhonebookEntry.class)).thenReturn(criteriaQuery);
-        when(em.createQuery(criteriaQuery)).thenReturn(query);
-        when(em.createQuery("SELECT t FROM PhonebookEntry t", PhonebookEntry.class)).thenReturn(query);
-        when(criteriaQuery.select(Matchers.<Selection<? extends PhonebookEntry>> any()))
-                .thenReturn(criteriaQuery);
-        when(query.getResultList()).thenReturn(Arrays.asList(entry));
-
-        final PhonebookServiceHandler phonebookServiceHandler = new PhonebookServiceHandler(utx, em, uriInfo);
         final PhonebookEntries entries = phonebookServiceHandler.queryPhonebook(null, null, null);
 
+        assertEquals(2, entries.getEntries().size());
+        final PhonebookEntry default1 = new PhonebookEntry("Mr", "Fred", "Jones", "01962 000000");
+        final PhonebookEntry default2 = new PhonebookEntry("Mrs", "Jane", "Doe", "01962 000001");
+
+        assertTrue(entries.getEntries().get(0).equals(default1));
+        assertTrue(entries.getEntries().get(1).equals(default2));
+    }
+
+    @Test
+    public void queryPhonebook() throws Exception {
+        final PhonebookEntry entry1 = new PhonebookEntry("Mr", "John", "Smith", "12345");
+        final PhonebookEntry entry2 = new PhonebookEntry("Ms", "Jane", "Doe", "67890");
+        final PhonebookEntry entry3 = new PhonebookEntry("Ms", "Jessica", "Rabbit", "1111-2222");
+        createEntries(Arrays.asList(entry1, entry2, entry3));
+
+        PhonebookEntries entries = phonebookServiceHandler.queryPhonebook(null, null, null);
+        assertEquals(3, entries.getEntries().size());
+
+        entries = phonebookServiceHandler.queryPhonebook("Ms", null, null);
+        assertEquals(2, entries.getEntries().size());
+
+        entries = phonebookServiceHandler.queryPhonebook("Ms", "Jane", null);
         assertEquals(1, entries.getEntries().size());
-        assertEquals(true, entries.getEntries().get(0).equals(entry));
+        assertEquals(true, entries.getEntries().get(0).equals(entry2));
 
+        entries = phonebookServiceHandler.queryPhonebook(null, "John", null);
+        assertEquals(1, entries.getEntries().size());
+        assertEquals(true, entries.getEntries().get(0).equals(entry1));
+
+        entries = phonebookServiceHandler.queryPhonebook(null, null, "Rabbit");
+        assertEquals(1, entries.getEntries().size());
+        assertEquals(true, entries.getEntries().get(0).equals(entry3));
     }
 
     @Test
-    public void getEntry() {
-        final PhonebookEntry entry = new PhonebookEntry("Mr", "John", "Doe", "12345");
-        when(em.find(PhonebookEntry.class, id)).thenReturn(entry);
+    public void getEntry() throws Exception {
+        final PhonebookEntry entry1 = new PhonebookEntry("Mr", "John", "Smith", "12345");
+        final PhonebookEntry entry2 = new PhonebookEntry("Mrs", "Jane", "Doe", "67890");
+        final PhonebookEntry entry3 = new PhonebookEntry("Ms", "Jessica", "Rabbit", "1111-2222");
+        createEntries(Arrays.asList(entry1, entry2, entry3));
 
-        final PhonebookServiceHandler phonebookServiceHandler = new PhonebookServiceHandler(utx, em, uriInfo);
-        final PhonebookEntry returnedEntry = phonebookServiceHandler.getEntry("1");
+        PhonebookEntry returnedEntry = phonebookServiceHandler.getEntry(String.valueOf(entry1.getId()));
+        assertEquals(true, returnedEntry.equals(entry1));
 
-        assertEquals(true, returnedEntry.equals(entry));
+        returnedEntry = phonebookServiceHandler.getEntry(String.valueOf(entry2.getId()));
+        assertEquals(true, returnedEntry.equals(entry2));
+
+        returnedEntry = phonebookServiceHandler.getEntry(String.valueOf(entry3.getId()));
+        assertEquals(true, returnedEntry.equals(entry3));
     }
 
     @Test(expected = NotFoundException.class)
-    public void getEntryNotFound() {
-        when(em.find(PhonebookEntry.class, id)).thenReturn(null);
+    public void getEntryNotFound() throws Exception {
+        final PhonebookEntry entry1 = new PhonebookEntry("Mr", "John", "Smith", "12345");
+        final PhonebookEntry entry2 = new PhonebookEntry("Mrs", "Jane", "Doe", "67890");
+        final PhonebookEntry entry3 = new PhonebookEntry("Ms", "Jessica", "Rabbit", "1111-2222");
+        createEntries(Arrays.asList(entry1, entry2, entry3));
 
-        final PhonebookServiceHandler phonebookServiceHandler = new PhonebookServiceHandler(utx, em, uriInfo);
-        phonebookServiceHandler.getEntry("1");
-
+        phonebookServiceHandler.getEntry("10000");
     }
 
     @Test
-    public void create() {
-        try {
-            when(uriInfo.getAbsolutePath()).thenReturn(new URI("http://localhost:1234/api/phonebook"));
-        } catch (final URISyntaxException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        final PhonebookServiceHandler phonebookServiceHandler = new PhonebookServiceHandler(utx, em, uriInfo);
+    public void create() throws Exception {
         final PhonebookEntry entry = new PhonebookEntry("Mr", "John", "Doe", "12345");
-        entry.setId(id);
-        final Response response = phonebookServiceHandler.create(entry);
+        Response response = phonebookServiceHandler.create(entry);
 
-        verify(em).persist(argument.capture());
-        assertEquals(true, argument.getValue().equals(entry));
         assertEquals(201, response.getStatus());
-        assertEquals("http://localhost:1234/api/phonebook/1", response.getLocation().toString());
+        String expectedLocation = DUMMYHOST + "/" + entry.getId();
+        assertEquals(expectedLocation, response.getLocation().toString());
+
+        // Create a second one
+        final PhonebookEntry entry2 = new PhonebookEntry("Mrs", "Jane", "Doe", "67890");
+        response = phonebookServiceHandler.create(entry2);
+
+        assertEquals(201, response.getStatus());
+        expectedLocation = DUMMYHOST + "/" + entry2.getId();
+        assertEquals(expectedLocation, response.getLocation().toString());
+
+        assertFalse(entry.getId() == entry2.getId());
+
     }
 
     @Test
-    public void update() {
-        when(em.find(PhonebookEntry.class, id)).thenReturn(new PhonebookEntry("Mr", "John", "Doe", "12345"));
+    public void update() throws Exception {
+        final PhonebookEntry entry = new PhonebookEntry("Mr", "John", "Doe", "12345");
+        createEntries(Arrays.asList(entry));
 
-        final PhonebookServiceHandler phonebookServiceHandler = new PhonebookServiceHandler(utx, em, uriInfo);
-        final PhonebookEntry entry = new PhonebookEntry("Mr", "Jack", "Doe", "12345");
-        final Response response = phonebookServiceHandler.update("1", entry);
+        final PhonebookEntry updateEntry = new PhonebookEntry("Mr", "Jack", "Doe", "12345");
+        final Response response = phonebookServiceHandler.update(String.valueOf(entry.getId()), updateEntry);
 
-        verify(em).merge(argument.capture());
-        assertEquals(true, argument.getValue().equals(entry));
         assertEquals(204, response.getStatus());
+
+        final PhonebookEntry returnedEntry = phonebookServiceHandler.getEntry(String.valueOf(entry.getId()));
+        assertEquals(true, returnedEntry.equals(updateEntry));
     }
 
     @Test(expected = NotFoundException.class)
-    public void updateNotFound() {
-        when(em.find(PhonebookEntry.class, id)).thenReturn(null);
-
-        final PhonebookServiceHandler phonebookServiceHandler = new PhonebookServiceHandler(utx, em, uriInfo);
-        final PhonebookEntry entry = new PhonebookEntry("Mr", "Jack", "Doe", "12345");
-        phonebookServiceHandler.update("1", entry);
+    public void updateNotFound() throws Exception {
+        final PhonebookEntry updateEntry = new PhonebookEntry("Mr", "Jack", "Doe", "12345");
+        phonebookServiceHandler.update("10000", updateEntry);
     }
 
     @Test
-    public void deleteEntry() {
-        final PhonebookEntry entry = new PhonebookEntry("Mr", "John", "Doe", "12345");
-        when(em.find(PhonebookEntry.class, id)).thenReturn(entry);
+    public void deleteEntry() throws Exception {
+        final PhonebookEntry entry1 = new PhonebookEntry("Mr", "John", "Smith", "12345");
+        final PhonebookEntry entry2 = new PhonebookEntry("Mrs", "Jane", "Doe", "67890");
+        final PhonebookEntry entry3 = new PhonebookEntry("Ms", "Jessica", "Rabbit", "1111-2222");
+        createEntries(Arrays.asList(entry1, entry2, entry3));
 
-        final PhonebookServiceHandler phonebookServiceHandler = new PhonebookServiceHandler(utx, em, uriInfo);
-        final Response response = phonebookServiceHandler.deleteEntry("1");
+        Response response = phonebookServiceHandler.deleteEntry(String.valueOf(entry2.getId()));
+        assertEquals(204, response.getStatus());
+        assertEquals(2, phonebookServiceHandler.queryPhonebook(null, null, null).getEntries().size());
 
-        verify(em).remove(argument.capture());
-        assertEquals(true, argument.getValue().equals(entry));
+        response = phonebookServiceHandler.deleteEntry(String.valueOf(entry1.getId()));
+        assertEquals(204, response.getStatus());
+        final PhonebookEntries entries = phonebookServiceHandler.queryPhonebook(null, null, null);
+        assertEquals(1, entries.getEntries().size());
+        assertEquals(true, entries.getEntries().get(0).equals(entry3));
+
+        response = phonebookServiceHandler.deleteEntry(String.valueOf(entry3.getId()));
         assertEquals(204, response.getStatus());
     }
 
     @Test(expected = NotFoundException.class)
     public void deleteEntryNotFound() {
-        when(em.find(PhonebookEntry.class, id)).thenReturn(null);
-
-        final PhonebookServiceHandler phonebookServiceHandler = new PhonebookServiceHandler(utx, em, uriInfo);
-        phonebookServiceHandler.deleteEntry("1");
-
+        phonebookServiceHandler.deleteEntry("10000");
     }
 
 }
