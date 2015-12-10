@@ -4,7 +4,7 @@
 			<id>mulesoft-snapshot</id>
            <name>MuleSoft Snapshots Repository</name>
            <url>https://repository-master.mulesoft.org/snapshots/</url>
-       </pluginRepository>
+       </pluginRepository> 
   </pluginRepositories>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.ibmcloud.contest</groupId>
@@ -121,6 +121,7 @@
 		        <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
 		        <outputFile>${project.build.directory}/generated-sources/jaxrs-raml/api.raml</outputFile>
 		        <removeOldOutput>false</removeOldOutput>
+		        <baseUrl>http://example.com/api</baseUrl>
 		    </configuration>
 		    <executions>
 		        <execution>
