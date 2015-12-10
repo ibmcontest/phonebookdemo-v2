@@ -1,4 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <pluginRepositories>
+       <pluginRepository>
+			<id>mulesoft-snapshot</id>
+           <name>MuleSoft Snapshots Repository</name>
+           <url>https://repository-master.mulesoft.org/snapshots/</url>
+       </pluginRepository> 
+  </pluginRepositories>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.ibmcloud.contest</groupId>
   <artifactId>phonebookdemo</artifactId>
@@ -51,6 +58,11 @@
           <warSourceDirectory>WebContent</warSourceDirectory>
            <outputDirectory>${project.build.directory}</outputDirectory>
           <failOnMissingWebXml>false</failOnMissingWebXml>
+          <webResources>
+            <resource>
+              <directory>${project.build.directory}/generated-sources/jaxrs-raml/</directory>
+            </resource>
+          </webResources>
         </configuration>
       </plugin>
       <plugin>
@@ -101,7 +113,56 @@
           </execution>
         </executions>
       </plugin>
-    </plugins>
+      <plugin>
+		    <groupId>org.raml.plugins</groupId>
+		    <artifactId>jaxrs-raml-maven-plugin</artifactId>
+		    <version>1.3.4-SNAPSHOT</version>
+		    <configuration>
+		        <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+		        <outputFile>${project.build.directory}/generated-sources/jaxrs-raml/api.raml</outputFile>
+		        <removeOldOutput>false</removeOldOutput>
+		        <baseUrl>http://example.com/api</baseUrl>
+		    </configuration>
+		    <executions>
+		        <execution>
+		            <goals>
+		                <goal>generate-raml</goal>
+		            </goals>
+		            <phase>compile</phase>
+		        </execution>
+		    </executions>
+		</plugin>
+  </plugins>
+  <pluginManagement>
+  	<plugins>
+  		<plugin>
+		    <groupId>org.eclipse.m2e</groupId>
+		    <artifactId>lifecycle-mapping</artifactId>
+		    <version>1.0.0</version>
+		    <configuration>
+		        <lifecycleMappingMetadata>
+		            <pluginExecutions>
+		            	<pluginExecution>
+						    <pluginExecutionFilter>
+						        <groupId>org.raml.plugins</groupId>
+						        <artifactId>jaxrs-raml-maven-plugin</artifactId>
+						        <versionRange>1.3.4-SNAPSHOT</versionRange>
+						        <goals>
+						            <goal>generate-raml</goal>
+						        </goals>
+						    </pluginExecutionFilter>
+						    <action>
+						        <execute>
+						            <runOnIncremental>false</runOnIncremental>
+						        </execute>
+						    </action>
+						</pluginExecution>
+		            </pluginExecutions>
+		        </lifecycleMappingMetadata>
+		    </configuration>
+		</plugin>
+  	</plugins>
+  </pluginManagement>
   </build>
   <properties>
     <m2eclipse.wtp.contextRoot>/</m2eclipse.wtp.contextRoot>

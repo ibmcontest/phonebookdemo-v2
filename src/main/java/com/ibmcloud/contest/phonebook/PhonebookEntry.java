@@ -22,9 +22,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @Table(name = "phonebook")
+@XmlRootElement(name = "phonebookEntry")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class PhonebookEntry {
 
     public PhonebookEntry() {
@@ -44,22 +50,27 @@ public class PhonebookEntry {
     // Primary Key
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @XmlElement(name = "id")
     long id;
 
     @Basic
     @Column(name = "TITLE")
+    @XmlElement(name = "title")
     String title;
 
     @Basic
     @Column(name = "FIRSTNAME")
+    @XmlElement(name = "firstName")
     String firstName;
 
     @Basic
     @Column(name = "LASTNAME")
+    @XmlElement(name = "lastName")
     String lastName;
 
     @Basic
     @Column(name = "PHONENUMBER")
+    @XmlElement(name = "phoneNumber")
     String phoneNumber;
 
     public long getId() {
