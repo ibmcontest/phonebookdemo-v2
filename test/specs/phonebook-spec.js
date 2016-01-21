@@ -42,7 +42,8 @@
           "title":"X",
           "firstName":"X",
           "lastName":"X",
-          "phoneNumber":"X"
+          "phoneNumber":"X",
+          "email":"X"
         }]});
 
         $httpBackend.when('GET', PHONEBOOK_API+"/1")
@@ -51,7 +52,8 @@
           "title":"X",
           "firstName":"X",
           "lastName":"X",
-          "phoneNumber":"X"
+          "phoneNumber":"X",
+          "email":"X"
         });
 
         $httpBackend.when('DELETE', PHONEBOOK_API+"/1")
@@ -62,6 +64,7 @@
           firstName : "",
           lastName : "",
           phoneNumber : "",
+          email : "",
         })
         .respond(204, "bah");
 
@@ -70,6 +73,7 @@
           firstName : "",
           lastName : "",
           phoneNumber : "",
+          email : "",
         })
         .respond(201, "bah");
 
@@ -127,6 +131,7 @@
         firstName : "",
         lastName : "",
         phoneNumber : "",
+        email : "",
       });
       scope.setId(1);
       scope.submit();
@@ -140,6 +145,7 @@
         firstName : "",
         lastName : "",
         phoneNumber : "",
+        email : "",
       });
       scope.submit();
       $httpBackend.flush();
