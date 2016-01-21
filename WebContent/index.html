@@ -6,12 +6,12 @@
 	<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
 	<script src="phonebook.js"></script>
-	
-	<link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">	
+
+	<link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
 </head>
 <body>
 	<div style="text-align: center">
-		<h2>Phonebook</h2>	
+		<h2>Phonebook</h2>
 	</div>
 	<a href="https://github.com/ibmcontest/phonebookdemo"><img
 		style="position: absolute; top: 0; left: 0; border: 0;"
@@ -28,6 +28,7 @@
 					<th>First Name</th>
 					<th>Last Name</th>
 					<th>Phone Number</th>
+					<th>Email</th>
 			</thead>
 			<tr ng-repeat="(index, item) in entries">
 				<td>{{item.id}}</td>
@@ -35,6 +36,7 @@
 				<td>{{item.firstName}}</td>
 				<td>{{item.lastName}}</td>
 				<td>{{item.phoneNumber}}</td>
+				<td>{{item.email}}</td>
 				<td><a ng-click="setId(item.id); loadEntry()" style="cursor: pointer"
 					data-toggle="modal" data-target="#editModal"><i
 						class="glyphicon glyphicon-pencil"></i></a></td>
@@ -95,6 +97,14 @@
 									name="phoneNumber" ng-model="entry.phoneNumber"
 									class="form-control" required> <span
 									ng-show="editForm.phoneNumber.$error.required && !editForm.phoneNumber.$pristine"> Required</span>
+							</div>
+
+							<div class="form-group"
+								ng-class="{error: editForm.email.$invalid && !editForm.email.$pristine}">
+								<label>Email</label> <input type="text" name="email"
+									ng-model="entry.email" class="form-control" required>
+								<span
+									ng-show="editForm.email.$error.required && !editForm.email.$pristine"> Required</span>
 							</div>
 						</form>
 					</div>

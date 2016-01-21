@@ -178,6 +178,7 @@ public class PhonebookServiceHandler {
             dbEntry.setFirstName(entry.getFirstName());
             dbEntry.setLastName(entry.getLastName());
             dbEntry.setPhoneNumber(entry.getPhoneNumber());
+            dbEntry.setEmail(entry.getEmail());
             em.merge(dbEntry);
             utx.commit();
             return Response.noContent().build();
