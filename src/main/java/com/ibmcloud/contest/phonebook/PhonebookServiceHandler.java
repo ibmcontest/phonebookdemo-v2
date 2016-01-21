@@ -76,7 +76,8 @@ public class PhonebookServiceHandler {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = PhonebookEntries.class),
             @ApiResponse(code = 500, message = "Internal error") })
     public PhonebookEntries queryPhonebook(@QueryParam("title") final String title,
-            @QueryParam("firstname") final String firstname, @QueryParam("lastname") final String lastname) {
+            @QueryParam("firstname") final String firstname, @QueryParam("lastname") final String lastname,
+            @QueryParam("email") final String email) {
 
         final List<PhonebookEntry> checkList = em
                 .createQuery("SELECT t FROM PhonebookEntry t", PhonebookEntry.class) //$NON-NLS-1$
@@ -99,6 +100,10 @@ public class PhonebookServiceHandler {
         if (lastname != null) {
             predicates.add(criteriaBuilder.equal(entry.get("lastName"), lastname)); //$NON-NLS-1$
         }
+        if (email != null) {
+            predicates.add(criteriaBuilder.equal(entry.get("email"), email)); //$NON-NLS-1$
+        }
+
         criteriaQuery.select(entry).where(predicates.toArray(new Predicate[] {}));
         final List<PhonebookEntry> entryList = em.createQuery(criteriaQuery).getResultList();
 
@@ -209,8 +214,8 @@ public class PhonebookServiceHandler {
     }
 
     private void createSampleData() {
-        create(new PhonebookEntry("Mr", "Fred", "Jones", "01962 000000")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-        create(new PhonebookEntry("Mrs", "Jane", "Doe", "01962 000001")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        create(new PhonebookEntry("Mr", "Fred", "Jones", "01962 000000", "fjones@email.com")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+        create(new PhonebookEntry("Mrs", "Jane", "Doe", "01962 000001", "jdoe@email.com")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
     }
 
     private UserTransaction getUserTransaction() {
