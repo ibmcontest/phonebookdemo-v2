@@ -184,7 +184,7 @@ public class PhonebookServiceHandler {
     public Response setFavorite(@PathParam("id") final String id,
             @QueryParam("setting") final String setting) {
 
-        if (setting != "true" && setting != "false") { //$NON-NLS-1$//$NON-NLS-2$
+        if (!setting.equals("true") && !setting.equals("false")) { //$NON-NLS-1$//$NON-NLS-2$
             throw new BadRequestException();
         }
         final Long queryId = Long.parseLong(id);
