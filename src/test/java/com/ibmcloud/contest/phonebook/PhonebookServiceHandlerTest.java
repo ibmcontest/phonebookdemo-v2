@@ -85,11 +85,13 @@ public class PhonebookServiceHandlerTest {
     public void initPhonebook() throws Exception {
         when(uriInfo.getAbsolutePath()).thenReturn(new URI(DUMMYHOST));
 
-        final PhonebookEntries entries = phonebookServiceHandler.queryPhonebook(null, null, null);
+        final PhonebookEntries entries = phonebookServiceHandler.queryPhonebook(null, null, null, null);
 
         assertEquals(2, entries.getEntries().size());
-        final PhonebookEntry default1 = new PhonebookEntry("Mr", "Fred", "Jones", "01962 000000");
-        final PhonebookEntry default2 = new PhonebookEntry("Mrs", "Jane", "Doe", "01962 000001");
+        final PhonebookEntry default1 = new PhonebookEntry("Mr", "Fred", "Jones", "01962 000000",
+                "fjones@email.com");
+        final PhonebookEntry default2 = new PhonebookEntry("Mrs", "Jane", "Doe", "01962 000001",
+                "jdoe@email.com");
 
         assertTrue(entries.getEntries().get(0).equals(default1));
         assertTrue(entries.getEntries().get(1).equals(default2));
@@ -97,35 +99,57 @@ public class PhonebookServiceHandlerTest {
 
     @Test
     public void queryPhonebook() throws Exception {
-        final PhonebookEntry entry1 = new PhonebookEntry("Mr", "John", "Smith", "12345");
-        final PhonebookEntry entry2 = new PhonebookEntry("Ms", "Jane", "Doe", "67890");
-        final PhonebookEntry entry3 = new PhonebookEntry("Ms", "Jessica", "Rabbit", "1111-2222");
+        final PhonebookEntry entry1 = new PhonebookEntry("Mr", "John", "Smith", "12345", "jsmith@email.com");
+        final PhonebookEntry entry2 = new PhonebookEntry("Ms", "Jane", "Doe", "67890", "jdoe@email.com");
+        final PhonebookEntry entry3 = new PhonebookEntry("Ms", "Jessica", "Rabbit", "1111-2222",
+                "jrabbit@email.com");
         createEntries(Arrays.asList(entry1, entry2, entry3));
 
-        PhonebookEntries entries = phonebookServiceHandler.queryPhonebook(null, null, null);
+        PhonebookEntries entries = phonebookServiceHandler.queryPhonebook(null, null, null, null);
         assertEquals(3, entries.getEntries().size());
 
-        entries = phonebookServiceHandler.queryPhonebook("Ms", null, null);
+        entries = phonebookServiceHandler.queryPhonebook("Ms", null, null, null);
         assertEquals(2, entries.getEntries().size());
 
-        entries = phonebookServiceHandler.queryPhonebook("Ms", "Jane", null);
+        entries = phonebookServiceHandler.queryPhonebook("Ms", "Jane", null, null);
         assertEquals(1, entries.getEntries().size());
         assertEquals(true, entries.getEntries().get(0).equals(entry2));
 
-        entries = phonebookServiceHandler.queryPhonebook(null, "John", null);
+        entries = phonebookServiceHandler.queryPhonebook(null, "John", null, null);
         assertEquals(1, entries.getEntries().size());
         assertEquals(true, entries.getEntries().get(0).equals(entry1));
 
-        entries = phonebookServiceHandler.queryPhonebook(null, null, "Rabbit");
+        entries = phonebookServiceHandler.queryPhonebook(null, null, "Rabbit", null);
         assertEquals(1, entries.getEntries().size());
         assertEquals(true, entries.getEntries().get(0).equals(entry3));
+
+        entries = phonebookServiceHandler.queryPhonebook(null, null, null, "jsmith@email.com");
+        assertEquals(1, entries.getEntries().size());
+        assertEquals(true, entries.getEntries().get(0).equals(entry1));
+
+    }
+
+    @Test
+    public void getFavorites() throws Exception {
+        final PhonebookEntry entry1 = new PhonebookEntry("Mr", "John", "Smith", "12345", "jsmith@email.com",
+                true);
+        final PhonebookEntry entry2 = new PhonebookEntry("Mrs", "Jane", "Doe", "67890", "jdoe@email.com",
+                false);
+        final PhonebookEntry entry3 = new PhonebookEntry("Ms", "Jessica", "Rabbit", "1111-2222",
+                "jrabbit@email.com", false);
+        createEntries(Arrays.asList(entry1, entry2, entry3));
+
+        final PhonebookEntries entries = phonebookServiceHandler.getFavorites();
+        assertEquals(1, entries.getEntries().size());
+        assertEquals(true, entries.getEntries().get(0).equals(entry1));
     }
 
     @Test
     public void getEntry() throws Exception {
-        final PhonebookEntry entry1 = new PhonebookEntry("Mr", "John", "Smith", "12345");
-        final PhonebookEntry entry2 = new PhonebookEntry("Mrs", "Jane", "Doe", "67890");
-        final PhonebookEntry entry3 = new PhonebookEntry("Ms", "Jessica", "Rabbit", "1111-2222");
+        final PhonebookEntry entry1 = new PhonebookEntry("Mr", "John", "Smith", "12345", "jsmith@email.com");
+        final PhonebookEntry entry2 = new PhonebookEntry("Mrs", "Jane", "Doe", "67890", "jdoe@email.com");
+        final PhonebookEntry entry3 = new PhonebookEntry("Ms", "Jessica", "Rabbit", "1111-2222",
+                "jrabbit@email.com");
         createEntries(Arrays.asList(entry1, entry2, entry3));
 
         PhonebookEntry returnedEntry = phonebookServiceHandler.getEntry(String.valueOf(entry1.getId()));
@@ -140,9 +164,10 @@ public class PhonebookServiceHandlerTest {
 
     @Test(expected = NotFoundException.class)
     public void getEntryNotFound() throws Exception {
-        final PhonebookEntry entry1 = new PhonebookEntry("Mr", "John", "Smith", "12345");
-        final PhonebookEntry entry2 = new PhonebookEntry("Mrs", "Jane", "Doe", "67890");
-        final PhonebookEntry entry3 = new PhonebookEntry("Ms", "Jessica", "Rabbit", "1111-2222");
+        final PhonebookEntry entry1 = new PhonebookEntry("Mr", "John", "Smith", "12345", "jsmith@email.com");
+        final PhonebookEntry entry2 = new PhonebookEntry("Mrs", "Jane", "Doe", "67890", "jdoe@email.com");
+        final PhonebookEntry entry3 = new PhonebookEntry("Ms", "Jessica", "Rabbit", "1111-2222",
+                "jrabbit@email.com");
         createEntries(Arrays.asList(entry1, entry2, entry3));
 
         phonebookServiceHandler.getEntry("10000");
@@ -150,7 +175,7 @@ public class PhonebookServiceHandlerTest {
 
     @Test
     public void create() throws Exception {
-        final PhonebookEntry entry = new PhonebookEntry("Mr", "John", "Doe", "12345");
+        final PhonebookEntry entry = new PhonebookEntry("Mr", "John", "Doe", "12345", "jdoe@email.com");
         Response response = phonebookServiceHandler.create(entry);
 
         assertEquals(201, response.getStatus());
@@ -158,7 +183,7 @@ public class PhonebookServiceHandlerTest {
         assertEquals(expectedLocation, response.getLocation().toString());
 
         // Create a second one
-        final PhonebookEntry entry2 = new PhonebookEntry("Mrs", "Jane", "Doe", "67890");
+        final PhonebookEntry entry2 = new PhonebookEntry("Mrs", "Jane", "Doe", "67890", "jdoe@email.com");
         response = phonebookServiceHandler.create(entry2);
 
         assertEquals(201, response.getStatus());
@@ -170,11 +195,37 @@ public class PhonebookServiceHandlerTest {
     }
 
     @Test
-    public void update() throws Exception {
-        final PhonebookEntry entry = new PhonebookEntry("Mr", "John", "Doe", "12345");
+    public void setFavorite() throws Exception {
+        final PhonebookEntry entry = new PhonebookEntry("Mr", "John", "Smith", "12345", "jsmith@email.com");
         createEntries(Arrays.asList(entry));
 
-        final PhonebookEntry updateEntry = new PhonebookEntry("Mr", "Jack", "Doe", "12345");
+        final Response response = phonebookServiceHandler.setFavorite(String.valueOf(entry.getId()), "true");
+
+        assertEquals(204, response.getStatus());
+
+        final PhonebookEntries entries = phonebookServiceHandler.getFavorites();
+        assertEquals(1, entries.getEntries().size());
+        assertEquals(true, entries.getEntries().get(0).getFavorite());
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void setFavoriteNotFound() throws Exception {
+        phonebookServiceHandler.setFavorite("10000", "true");
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void setFavoriteBadArgument() throws Exception {
+        final PhonebookEntry entry = new PhonebookEntry("Mr", "John", "Doe", "12345", "jdoe@email.com");
+        createEntries(Arrays.asList(entry));
+        phonebookServiceHandler.setFavorite(String.valueOf(entry.getId()), "nottrueorfalse");
+    }
+
+    @Test
+    public void update() throws Exception {
+        final PhonebookEntry entry = new PhonebookEntry("Mr", "John", "Doe", "12345", "jdoe@email.com");
+        createEntries(Arrays.asList(entry));
+
+        final PhonebookEntry updateEntry = new PhonebookEntry("Mr", "Jack", "Doe", "12345", "jdoe@email.com");
         final Response response = phonebookServiceHandler.update(String.valueOf(entry.getId()), updateEntry);
 
         assertEquals(204, response.getStatus());
@@ -185,24 +236,25 @@ public class PhonebookServiceHandlerTest {
 
     @Test(expected = NotFoundException.class)
     public void updateNotFound() throws Exception {
-        final PhonebookEntry updateEntry = new PhonebookEntry("Mr", "Jack", "Doe", "12345");
+        final PhonebookEntry updateEntry = new PhonebookEntry("Mr", "Jack", "Doe", "12345", "jdoe@email.com");
         phonebookServiceHandler.update("10000", updateEntry);
     }
 
     @Test
     public void deleteEntry() throws Exception {
-        final PhonebookEntry entry1 = new PhonebookEntry("Mr", "John", "Smith", "12345");
-        final PhonebookEntry entry2 = new PhonebookEntry("Mrs", "Jane", "Doe", "67890");
-        final PhonebookEntry entry3 = new PhonebookEntry("Ms", "Jessica", "Rabbit", "1111-2222");
+        final PhonebookEntry entry1 = new PhonebookEntry("Mr", "John", "Smith", "12345", "jsmith@email.com");
+        final PhonebookEntry entry2 = new PhonebookEntry("Mrs", "Jane", "Doe", "67890", "jdoe@email.com");
+        final PhonebookEntry entry3 = new PhonebookEntry("Ms", "Jessica", "Rabbit", "1111-2222",
+                "jrabbit@email.com");
         createEntries(Arrays.asList(entry1, entry2, entry3));
 
         Response response = phonebookServiceHandler.deleteEntry(String.valueOf(entry2.getId()));
         assertEquals(204, response.getStatus());
-        assertEquals(2, phonebookServiceHandler.queryPhonebook(null, null, null).getEntries().size());
+        assertEquals(2, phonebookServiceHandler.queryPhonebook(null, null, null, null).getEntries().size());
 
         response = phonebookServiceHandler.deleteEntry(String.valueOf(entry1.getId()));
         assertEquals(204, response.getStatus());
-        final PhonebookEntries entries = phonebookServiceHandler.queryPhonebook(null, null, null);
+        final PhonebookEntries entries = phonebookServiceHandler.queryPhonebook(null, null, null, null);
         assertEquals(1, entries.getEntries().size());
         assertEquals(true, entries.getEntries().get(0).equals(entry3));
 

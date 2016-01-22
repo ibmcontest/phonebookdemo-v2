@@ -33,17 +33,33 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PhonebookEntry {
 
+    // Default constructor
     public PhonebookEntry() {
         super();
     }
 
+    // Constructor without favorite. Sets to false by default
     public PhonebookEntry(final String title, final String firstName, final String lastName,
-            final String phoneNumber) {
+            final String phoneNumber, final String email) {
         super();
         this.title = title;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.favorite = false;
+    }
+
+    // Constructor with favorite included.
+    public PhonebookEntry(final String title, final String firstName, final String lastName,
+            final String phoneNumber, final String email, final Boolean favorite) {
+        super();
+        this.title = title;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.favorite = favorite;
     }
 
     @Id
@@ -72,6 +88,16 @@ public class PhonebookEntry {
     @Column(name = "PHONENUMBER")
     @XmlElement(name = "phoneNumber")
     String phoneNumber;
+
+    @Basic
+    @Column(name = "EMAIL")
+    @XmlElement(name = "email")
+    String email;
+
+    @Basic
+    @Column(name = "FAVORITE")
+    @XmlElement(name = "favorite")
+    Boolean favorite = false;
 
     public long getId() {
         return id;
@@ -113,10 +139,27 @@ public class PhonebookEntry {
         this.phoneNumber = phoneNumber;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(final String email) {
+        this.email = email;
+    }
+
+    public Boolean getFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(final Boolean favorite) {
+        this.favorite = favorite;
+    }
+
     // Simple equals method to check if title, name, and phone number are the same as "other"
     public boolean equals(final PhonebookEntry other) {
         return (this.title == other.getTitle() && this.firstName == other.getFirstName()
-                && this.lastName == other.getLastName() && this.phoneNumber == other.getPhoneNumber());
+                && this.lastName == other.getLastName() && this.phoneNumber == other.getPhoneNumber()
+                && this.email == other.getEmail());
     }
 
 }

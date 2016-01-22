@@ -76,7 +76,8 @@ public class PhonebookServiceHandler {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = PhonebookEntries.class),
             @ApiResponse(code = 500, message = "Internal error") })
     public PhonebookEntries queryPhonebook(@QueryParam("title") final String title,
-            @QueryParam("firstname") final String firstname, @QueryParam("lastname") final String lastname) {
+            @QueryParam("firstname") final String firstname, @QueryParam("lastname") final String lastname,
+            @QueryParam("email") final String email) {
 
         final List<PhonebookEntry> checkList = em
                 .createQuery("SELECT t FROM PhonebookEntry t", PhonebookEntry.class) //$NON-NLS-1$
@@ -99,6 +100,10 @@ public class PhonebookServiceHandler {
         if (lastname != null) {
             predicates.add(criteriaBuilder.equal(entry.get("lastName"), lastname)); //$NON-NLS-1$
         }
+        if (email != null) {
+            predicates.add(criteriaBuilder.equal(entry.get("email"), email)); //$NON-NLS-1$
+        }
+
         criteriaQuery.select(entry).where(predicates.toArray(new Predicate[] {}));
         final List<PhonebookEntry> entryList = em.createQuery(criteriaQuery).getResultList();
 
@@ -106,6 +111,22 @@ public class PhonebookServiceHandler {
         entries.setEntries(entryList);
         return entries;
 
+    }
+
+    @GET
+    @Path("favorites")
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Returns list of entries matching the query")
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = PhonebookEntries.class),
+            @ApiResponse(code = 500, message = "Internal error") })
+    public PhonebookEntries getFavorites() {
+        final List<PhonebookEntry> entryList = em
+                .createQuery("SELECT t FROM PhonebookEntry t WHERE t.favorite = 1", PhonebookEntry.class) //$NON-NLS-1$
+                .getResultList();
+
+        final PhonebookEntries entries = new PhonebookEntries();
+        entries.setEntries(entryList);
+        return entries;
     }
 
     @GET
@@ -153,6 +174,37 @@ public class PhonebookServiceHandler {
 
     }
 
+    @POST
+    @Path("favorites/{id}")
+    @ApiOperation(value = "Sets the favorite status of an entry in the phonebook")
+    @ApiResponses(value = { @ApiResponse(code = 204, message = "OK"),
+            @ApiResponse(code = 400, message = "Bad arguments"),
+            @ApiResponse(code = 404, message = "Entry not found for given ID"),
+            @ApiResponse(code = 500, message = "Internal error") })
+    public Response setFavorite(@PathParam("id") final String id,
+            @QueryParam("setting") final String setting) {
+
+        if (!setting.equals("true") && !setting.equals("false")) { //$NON-NLS-1$//$NON-NLS-2$
+            throw new BadRequestException();
+        }
+        final Long queryId = Long.parseLong(id);
+        final PhonebookEntry dbEntry = em.find(PhonebookEntry.class, queryId);
+        if (dbEntry == null) {
+            throw new NotFoundException();
+        }
+        final Boolean favorite = Boolean.parseBoolean(setting);
+        try {
+            utx.begin();
+            dbEntry.setFavorite(favorite);
+            em.merge(dbEntry);
+            utx.commit();
+            return Response.noContent().build();
+        } catch (final Exception e) {
+            e.printStackTrace();
+            throw new WebApplicationException();
+        }
+    }
+
     @PUT
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -173,6 +225,7 @@ public class PhonebookServiceHandler {
             dbEntry.setFirstName(entry.getFirstName());
             dbEntry.setLastName(entry.getLastName());
             dbEntry.setPhoneNumber(entry.getPhoneNumber());
+            dbEntry.setEmail(entry.getEmail());
             em.merge(dbEntry);
             utx.commit();
             return Response.noContent().build();
@@ -209,8 +262,8 @@ public class PhonebookServiceHandler {
     }
 
     private void createSampleData() {
-        create(new PhonebookEntry("Mr", "Fred", "Jones", "01962 000000")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-        create(new PhonebookEntry("Mrs", "Jane", "Doe", "01962 000001")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        create(new PhonebookEntry("Mr", "Fred", "Jones", "01962 000000", "fjones@email.com")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+        create(new PhonebookEntry("Mrs", "Jane", "Doe", "01962 000001", "jdoe@email.com")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
     }
 
     private UserTransaction getUserTransaction() {

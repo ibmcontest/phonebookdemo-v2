@@ -6,14 +6,14 @@
 	<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
 	<script src="phonebook.js"></script>
-	
-	<link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">	
+
+	<link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
 </head>
 <body>
 	<div style="text-align: center">
-		<h2>Phonebook</h2>	
+		<h2>Phonebook</h2>
 	</div>
-	<a href="https://github.com/ibmcontest/phonebookdemo"><img
+	<a href="https://github.com/ibmcontest/phonebookdemo-v2"><img
 		style="position: absolute; top: 0; left: 0; border: 0;"
 		src="https://camo.githubusercontent.com/121cd7cbdc3e4855075ea8b558508b91ac463ac2/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f677265656e5f3030373230302e706e67"
 		alt="Fork me on GitHub"
@@ -28,6 +28,8 @@
 					<th>First Name</th>
 					<th>Last Name</th>
 					<th>Phone Number</th>
+					<th>Email</th>
+					<th>Favorite?</th>
 			</thead>
 			<tr ng-repeat="(index, item) in entries">
 				<td>{{item.id}}</td>
@@ -35,11 +37,20 @@
 				<td>{{item.firstName}}</td>
 				<td>{{item.lastName}}</td>
 				<td>{{item.phoneNumber}}</td>
+				<td>{{item.email}}</td>
+				<td align="center"><i ng-show = "item.favorite" class="glyphicon glyphicon-heart" style="color:red"></i></td>
+				<td><a ng-show = "item.favorite" ng-click="setId(item.id); setFavorite(false)" style="cursor: pointer"
+					title="Unfavorite"><i class="glyphicon glyphicon-heart"></i></a>
+
+						<a ng-show = "!item.favorite" ng-click="setId(item.id); setFavorite(true)" style="cursor: pointer"
+							title="Favorite"><i class="glyphicon glyphicon-heart"></i></a>
+
+					</td>
 				<td><a ng-click="setId(item.id); loadEntry()" style="cursor: pointer"
-					data-toggle="modal" data-target="#editModal"><i
+					data-toggle="modal" data-target="#editModal" title="Edit"><i
 						class="glyphicon glyphicon-pencil"></i></a></td>
 				<td><a ng-click="setId(item.id)" style="cursor: pointer"
-					data-toggle="modal" data-target="#confirmModal"><i
+					data-toggle="modal" data-target="#confirmModal" title="Delete"><i
 						class="glyphicon glyphicon-remove-sign"></i></a></td>
 			</tr>
 			<tr>
@@ -95,6 +106,14 @@
 									name="phoneNumber" ng-model="entry.phoneNumber"
 									class="form-control" required> <span
 									ng-show="editForm.phoneNumber.$error.required && !editForm.phoneNumber.$pristine"> Required</span>
+							</div>
+
+							<div class="form-group"
+								ng-class="{error: editForm.email.$invalid && !editForm.email.$pristine}">
+								<label>Email</label> <input type="text" name="email"
+									ng-model="entry.email" class="form-control" required>
+								<span
+									ng-show="editForm.email.$error.required && !editForm.email.$pristine"> Required</span>
 							</div>
 						</form>
 					</div>

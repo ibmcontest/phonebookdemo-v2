@@ -20,7 +20,7 @@
   describe('phonebook', function () {
 
     var scope, createCtrl, $httpBackend, index;
-    var PHONEBOOK_API = 'api/phonebook';
+    var PHONEBOOK_API = 'api/v2/phonebook';
 
     beforeEach(function () {
       module('phonebook');
@@ -42,7 +42,9 @@
           "title":"X",
           "firstName":"X",
           "lastName":"X",
-          "phoneNumber":"X"
+          "phoneNumber":"X",
+          "email":"X",
+          "favorite":false
         }]});
 
         $httpBackend.when('GET', PHONEBOOK_API+"/1")
@@ -51,8 +53,21 @@
           "title":"X",
           "firstName":"X",
           "lastName":"X",
-          "phoneNumber":"X"
+          "phoneNumber":"X",
+          "email":"X",
+          "favorite":false
         });
+
+        $httpBackend.when('GET', PHONEBOOK_API+"/favorites")
+        .respond({"entries": [ {
+          "id":1,
+          "title":"X",
+          "firstName":"X",
+          "lastName":"X",
+          "phoneNumber":"X",
+          "email":"X",
+          "favorite":true
+        }]});
 
         $httpBackend.when('DELETE', PHONEBOOK_API+"/1")
         .respond(204, "bah");
@@ -62,6 +77,7 @@
           firstName : "",
           lastName : "",
           phoneNumber : "",
+          email : "",
         })
         .respond(204, "bah");
 
@@ -70,7 +86,11 @@
           firstName : "",
           lastName : "",
           phoneNumber : "",
+          email : ""
         })
+        .respond(201, "bah");
+
+        $httpBackend.when('POST', PHONEBOOK_API+"/favorites/1?setting=true")
         .respond(201, "bah");
 
 
@@ -112,6 +132,15 @@
       expect(scope.entry.title).toBe("");
     });
 
+    it('should add favorite to entry', function() {
+      var ctrl = createCtrl();
+      $httpBackend.expect('POST', PHONEBOOK_API+"/favorites/1?setting=true");
+      scope.setId(1);
+      scope.setFavorite(true);
+      $httpBackend.flush();
+
+    });
+
     it('should remove an entry', function() {
       var ctrl = createCtrl();
       $httpBackend.expect('DELETE', PHONEBOOK_API+"/1");
@@ -127,6 +156,7 @@
         firstName : "",
         lastName : "",
         phoneNumber : "",
+        email : "",
       });
       scope.setId(1);
       scope.submit();
@@ -140,6 +170,7 @@
         firstName : "",
         lastName : "",
         phoneNumber : "",
+        email : "",
       });
       scope.submit();
       $httpBackend.flush();

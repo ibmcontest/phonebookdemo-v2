@@ -19,31 +19,44 @@ angular.module('phonebook', [])
 .controller('PhonebookList', function($scope, $http, $location, $window) {
 
 	var id = 0;
-	$scope.entry = {title : "", firstName : "", lastName : "", phoneNumber : ""};
+	$scope.entry = {title : "", firstName : "", lastName : "", phoneNumber : "", email: ""};
 
-	$http.get('api/phonebook').success(function(data) {
+	$http.get('api/v2/phonebook').success(function(data) {
 		$scope.entries = data.entries;
 	});
 
 	$scope.loadEntry = function() {
 
 		if (id) {
-			$http.get('api/phonebook/' + id).success(function(data) {
+			$http.get('api/v2/phonebook/' + id).success(function(data) {
 				$scope.entry = data;
 			});
 		} else {
-			$scope.entry = {title : "", firstName : "", lastName : "", phoneNumber : ""};
+			$scope.entry = {title : "", firstName : "", lastName : "", phoneNumber : "", email : ""};
 		}
 
 	};
 
 	$scope.setId = function(_id) {
+		console.log("id");
 		id = _id;
+	};
+
+	$scope.setFavorite = function(setting) {
+		console.log("set");
+		if (id) {
+			console.log("id set to"+id);
+			$http.post('api/v2/phonebook/favorites/' +id+'?setting='+setting).then(function(data) {
+				$window.location.reload();
+			});
+		} else {
+			console.log("id not set");
+		}
 	};
 
 	$scope.remove = function() {
 
-		$http['delete']('api/phonebook/' + id).then(function(data) {
+		$http['delete']('api/v2/phonebook/' + id).then(function(data) {
 			$window.location.reload();
 		});
 
@@ -51,20 +64,22 @@ angular.module('phonebook', [])
 
 	$scope.submit = function() {
 		if (id) {
-			$http.put('api/phonebook/' + id, {
+			$http.put('api/v2/phonebook/' + id, {
 				title : $scope.entry.title,
 				firstName : $scope.entry.firstName,
 				lastName : $scope.entry.lastName,
-				phoneNumber : $scope.entry.phoneNumber
+				phoneNumber : $scope.entry.phoneNumber,
+				email : $scope.entry.email
 			}).then(function(data) {
 				$window.location.reload();
 			});
 		} else {
-			$http.post('api/phonebook', {
+			$http.post('api/v2/phonebook', {
 				title : $scope.entry.title,
 				firstName : $scope.entry.firstName,
 				lastName : $scope.entry.lastName,
-				phoneNumber : $scope.entry.phoneNumber
+				phoneNumber : $scope.entry.phoneNumber,
+				email : $scope.entry.email
 			}).then(function(data) {
 				$window.location.reload();
 			});
