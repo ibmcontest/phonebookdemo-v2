@@ -97,7 +97,7 @@ public class PhonebookEntry {
     @Basic
     @Column(name = "FAVORITE")
     @XmlElement(name = "favorite")
-    Boolean favorite;
+    Boolean favorite = false;
 
     public long getId() {
         return id;

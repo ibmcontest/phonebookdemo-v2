@@ -121,7 +121,7 @@
 		        <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
 		        <outputFile>${project.build.directory}/generated-sources/jaxrs-raml/api.raml</outputFile>
 		        <removeOldOutput>false</removeOldOutput>
-		        <baseUrl>http://example.com/api</baseUrl>
+		        <baseUrl>http://example.com/api/v2</baseUrl>
 		    </configuration>
 		    <executions>
 		        <execution>
