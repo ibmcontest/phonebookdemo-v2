@@ -130,6 +130,21 @@ public class PhonebookServiceHandlerTest {
     }
 
     @Test
+    public void getFavorites() throws Exception {
+        final PhonebookEntry entry1 = new PhonebookEntry("Mr", "John", "Smith", "12345", "jsmith@email.com",
+                true);
+        final PhonebookEntry entry2 = new PhonebookEntry("Mrs", "Jane", "Doe", "67890", "jdoe@email.com",
+                false);
+        final PhonebookEntry entry3 = new PhonebookEntry("Ms", "Jessica", "Rabbit", "1111-2222",
+                "jrabbit@email.com", false);
+        createEntries(Arrays.asList(entry1, entry2, entry3));
+
+        final PhonebookEntries entries = phonebookServiceHandler.getFavorites();
+        assertEquals(1, entries.getEntries().size());
+        assertEquals(true, entries.getEntries().get(0).equals(entry1));
+    }
+
+    @Test
     public void getEntry() throws Exception {
         final PhonebookEntry entry1 = new PhonebookEntry("Mr", "John", "Smith", "12345", "jsmith@email.com");
         final PhonebookEntry entry2 = new PhonebookEntry("Mrs", "Jane", "Doe", "67890", "jdoe@email.com");
@@ -177,6 +192,32 @@ public class PhonebookServiceHandlerTest {
 
         assertFalse(entry.getId() == entry2.getId());
 
+    }
+
+    @Test
+    public void setFavorite() throws Exception {
+        final PhonebookEntry entry = new PhonebookEntry("Mr", "John", "Smith", "12345", "jsmith@email.com");
+        createEntries(Arrays.asList(entry));
+
+        final Response response = phonebookServiceHandler.setFavorite(String.valueOf(entry.getId()), "true");
+
+        assertEquals(204, response.getStatus());
+
+        final PhonebookEntries entries = phonebookServiceHandler.getFavorites();
+        assertEquals(1, entries.getEntries().size());
+        assertEquals(true, entries.getEntries().get(0).getFavorite());
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void setFavoriteNotFound() throws Exception {
+        phonebookServiceHandler.setFavorite("10000", "true");
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void setFavoriteBadArgument() throws Exception {
+        final PhonebookEntry entry = new PhonebookEntry("Mr", "John", "Doe", "12345", "jdoe@email.com");
+        createEntries(Arrays.asList(entry));
+        phonebookServiceHandler.setFavorite(String.valueOf(entry.getId()), "nottrueorfalse");
     }
 
     @Test

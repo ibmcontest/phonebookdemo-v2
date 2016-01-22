@@ -114,6 +114,22 @@ public class PhonebookServiceHandler {
     }
 
     @GET
+    @Path("favorites")
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Returns list of entries matching the query")
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = PhonebookEntries.class),
+            @ApiResponse(code = 500, message = "Internal error") })
+    public PhonebookEntries getFavorites() {
+        final List<PhonebookEntry> entryList = em
+                .createQuery("SELECT t FROM PhonebookEntry t WHERE t.favorite = 1", PhonebookEntry.class) //$NON-NLS-1$
+                .getResultList();
+
+        final PhonebookEntries entries = new PhonebookEntries();
+        entries.setEntries(entryList);
+        return entries;
+    }
+
+    @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Returns entry with provided ID")
@@ -156,6 +172,37 @@ public class PhonebookServiceHandler {
             }
         }
 
+    }
+
+    @POST
+    @Path("favorites/{id}")
+    @ApiOperation(value = "Sets the favorite status of an entry in the phonebook")
+    @ApiResponses(value = { @ApiResponse(code = 204, message = "OK"),
+            @ApiResponse(code = 400, message = "Bad arguments"),
+            @ApiResponse(code = 404, message = "Entry not found for given ID"),
+            @ApiResponse(code = 500, message = "Internal error") })
+    public Response setFavorite(@PathParam("id") final String id,
+            @QueryParam("setting") final String setting) {
+
+        if (setting != "true" && setting != "false") { //$NON-NLS-1$//$NON-NLS-2$
+            throw new BadRequestException();
+        }
+        final Long queryId = Long.parseLong(id);
+        final PhonebookEntry dbEntry = em.find(PhonebookEntry.class, queryId);
+        if (dbEntry == null) {
+            throw new NotFoundException();
+        }
+        final Boolean favorite = Boolean.parseBoolean(setting);
+        try {
+            utx.begin();
+            dbEntry.setFavorite(favorite);
+            em.merge(dbEntry);
+            utx.commit();
+            return Response.noContent().build();
+        } catch (final Exception e) {
+            e.printStackTrace();
+            throw new WebApplicationException();
+        }
     }
 
     @PUT
