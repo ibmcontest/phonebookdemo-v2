@@ -8,6 +8,7 @@
 
 		<jta-data-source>java:comp/env/jdbc/mydbdatasource</jta-data-source>
 		<class>com.ibmcloud.contest.phonebook.PhonebookEntry</class>
+		<class>com.ibmcloud.contest.phonebook.UserEntry</class>
 		<properties>
 		
 			<!--  To deploy locally on Liberty
@@ -33,6 +34,7 @@
 	
 	<persistence-unit name="phonebook-junit">
 		<class>com.ibmcloud.contest.phonebook.PhonebookEntry</class>
+		<class>com.ibmcloud.contest.phonebook.UserEntry</class>
 		<properties>		
 			<property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.EmbeddedDriver" />
             <property name="javax.persistence.jdbc.url" value="jdbc:derby:memory:phonebookDB;create=true" />
