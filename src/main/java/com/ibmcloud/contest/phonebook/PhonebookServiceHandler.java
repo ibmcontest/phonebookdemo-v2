@@ -217,7 +217,7 @@ public class PhonebookServiceHandler implements ReaderListener {
     @POST
     @Path("phonebook/favorites/{id}")
     @ApiOperation(value = "Sets the favorite status of an entry in the phonebook")
-    @ApiResponses(value = { @ApiResponse(code = 204, message = "OK"),
+    @ApiResponses(value = { @ApiResponse(code = 201, message = "Favorite set successfully"),
             @ApiResponse(code = 400, message = "Bad arguments"),
             @ApiResponse(code = 404, message = "Entry not found for given ID") })
     public Response setFavorite(@ApiParam(hidden = true) @QueryParam("Authorization") final String userkey,
@@ -227,7 +227,7 @@ public class PhonebookServiceHandler implements ReaderListener {
             throw new UnauthorizedException();
         }
 
-        if (!setting.equals("true") && !setting.equals("false")) { //$NON-NLS-1$//$NON-NLS-2$
+        if (setting == null || !setting.equals("true") && !setting.equals("false")) { //$NON-NLS-1$//$NON-NLS-2$
             throw new BadRequestException();
         }
         final Long queryId = Long.parseLong(id);
@@ -246,7 +246,8 @@ public class PhonebookServiceHandler implements ReaderListener {
             dbEntry.setFavorite(favorite);
             em.merge(dbEntry);
             utx.commit();
-            return Response.noContent().build();
+            final URI uri = new URI(uriInfo.getAbsolutePath().toString());
+            return Response.created(uri).build();
         } catch (final Exception e) {
             e.printStackTrace();
             throw new WebApplicationException();
@@ -331,10 +332,10 @@ public class PhonebookServiceHandler implements ReaderListener {
 
     @POST
     @Path("user")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Creates new user entry")
-    @ApiResponse(code = 200, message = "User created succesfully", response = UserEntry.class)
-    public UserEntry createUser() {
+    @ApiResponse(code = 201, message = "User created succesfully", response = UserEntry.class)
+    public Response createUser() {
 
         final String key = generateKey();
         final UserEntry user = new UserEntry(key);
@@ -342,7 +343,7 @@ public class PhonebookServiceHandler implements ReaderListener {
             utx.begin();
             em.persist(user);
             utx.commit();
-            return user;
+            return Response.status(201).entity(user).build();
         } catch (final Exception e) {
             e.printStackTrace();
             throw new WebApplicationException();
