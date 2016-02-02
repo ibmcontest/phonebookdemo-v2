@@ -92,7 +92,7 @@ public class PhonebookServiceHandlerTest {
 
     @Test
     public void createUser() {
-        final UserEntry entry = phonebookServiceHandler.createUser();
+        final UserEntry entry = (UserEntry) phonebookServiceHandler.createUser().getEntity();
         assertEquals(entry.getKey().length(), 11);
 
         final UserEntry findEntry = em.find(UserEntry.class, entry.getKey());
@@ -261,7 +261,7 @@ public class PhonebookServiceHandlerTest {
         final Response response = phonebookServiceHandler.setFavorite(USERKEY, String.valueOf(entry.getId()),
                 "true");
 
-        assertEquals(204, response.getStatus());
+        assertEquals(201, response.getStatus());
 
         final PhonebookEntries entries = phonebookServiceHandler.getFavorites(USERKEY);
         assertEquals(1, entries.getEntries().size());
