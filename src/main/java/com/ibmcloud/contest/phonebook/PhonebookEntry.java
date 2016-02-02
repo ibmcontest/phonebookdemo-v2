@@ -48,6 +48,7 @@ public class PhonebookEntry {
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.favorite = false;
+        this.userkey = null;
     }
 
     // Constructor with favorite included.
@@ -60,6 +61,31 @@ public class PhonebookEntry {
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.favorite = favorite;
+        this.userkey = null;
+    }
+
+    public PhonebookEntry(final String title, final String firstName, final String lastName,
+            final String phoneNumber, final String email, final String userkey) {
+        super();
+        this.title = title;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.favorite = false;
+        this.userkey = userkey;
+    }
+
+    public PhonebookEntry(final String title, final String firstName, final String lastName,
+            final String phoneNumber, final String email, final String userkey, final Boolean favorite) {
+        super();
+        this.title = title;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.favorite = favorite;
+        this.userkey = userkey;
     }
 
     @Id
@@ -88,6 +114,11 @@ public class PhonebookEntry {
     @Column(name = "PHONENUMBER")
     @XmlElement(name = "phoneNumber")
     String phoneNumber;
+
+    @Basic
+    @Column(name = "USERKEY")
+    @XmlElement(name = "userkey")
+    String userkey;
 
     @Basic
     @Column(name = "EMAIL")
@@ -137,6 +168,14 @@ public class PhonebookEntry {
 
     public void setPhoneNumber(final String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getUserkey() {
+        return userkey;
+    }
+
+    public void setUserKey(final String userkey) {
+        this.userkey = userkey;
     }
 
     public String getEmail() {
