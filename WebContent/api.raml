@@ -1,0 +1,345 @@
+#%RAML 0.8
+title: phonebook
+version: 2.0.0
+baseUri: http://example.com/api/v2
+protocols: [ HTTP ]
+securitySchemes:
+  - userKey:
+      description: User Key for API authentication
+      type: x-user-key
+      describedBy:
+        queryParameters:
+          Authentication:
+            type: string
+securedBy: [userKey]
+schemas: 
+  - phonebookEntries-xml: |
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        
+          <xs:element name="phonebookEntries" type="phonebookEntries"/>
+        
+          <xs:element name="phonebookEntry" type="phonebookEntry"/>
+        
+          <xs:complexType name="phonebookEntries">
+            <xs:sequence>
+              <xs:element name="entries" type="phonebookEntry" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        
+          <xs:complexType name="phonebookEntry">
+            <xs:sequence>
+              <xs:element name="id" type="xs:long"/>
+              <xs:element name="title" type="xs:string" minOccurs="0"/>
+              <xs:element name="firstName" type="xs:string" minOccurs="0"/>
+              <xs:element name="lastName" type="xs:string" minOccurs="0"/>
+              <xs:element name="phoneNumber" type="xs:string" minOccurs="0"/>
+              <xs:element name="userkey" type="xs:string" minOccurs="0"/>
+              <xs:element name="email" type="xs:string" minOccurs="0"/>
+              <xs:element name="favorite" type="xs:boolean" minOccurs="0"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:schema>
+  - phonebookEntries: |
+        {
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "required" : true ,
+          "properties" : {
+            "entries" : {
+              "type" : "array" ,
+              "required" : false ,
+              "items" : [
+                {
+                  "required" : false ,
+                  "type" : "object" ,
+                  "properties" : {
+                    "id" : {
+                      "required" : false ,
+                      "type" : "number"
+                    } ,
+                    "title" : {
+                      "required" : false ,
+                      "type" : "string"
+                    } ,
+                    "firstName" : {
+                      "required" : false ,
+                      "type" : "string"
+                    } ,
+                    "lastName" : {
+                      "required" : false ,
+                      "type" : "string"
+                    } ,
+                    "phoneNumber" : {
+                      "required" : false ,
+                      "type" : "string"
+                    } ,
+                    "userkey" : {
+                      "required" : false ,
+                      "type" : "string"
+                    } ,
+                    "email" : {
+                      "required" : false ,
+                      "type" : "string"
+                    } ,
+                    "favorite" : {
+                      "required" : false ,
+                      "type" : "boolean"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+  - phonebookEntry-xml: |
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        
+          <xs:element name="phonebookEntry" type="phonebookEntry"/>
+        
+          <xs:complexType name="phonebookEntry">
+            <xs:sequence>
+              <xs:element name="id" type="xs:long"/>
+              <xs:element name="title" type="xs:string" minOccurs="0"/>
+              <xs:element name="firstName" type="xs:string" minOccurs="0"/>
+              <xs:element name="lastName" type="xs:string" minOccurs="0"/>
+              <xs:element name="phoneNumber" type="xs:string" minOccurs="0"/>
+              <xs:element name="userkey" type="xs:string" minOccurs="0"/>
+              <xs:element name="email" type="xs:string" minOccurs="0"/>
+              <xs:element name="favorite" type="xs:boolean" minOccurs="0"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:schema>
+  - phonebookEntry: |
+        {
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "required" : true ,
+          "properties" : {
+            "id" : {
+              "required" : false ,
+              "type" : "number"
+            } ,
+            "title" : {
+              "required" : false ,
+              "type" : "string"
+            } ,
+            "firstName" : {
+              "required" : false ,
+              "type" : "string"
+            } ,
+            "lastName" : {
+              "required" : false ,
+              "type" : "string"
+            } ,
+            "phoneNumber" : {
+              "required" : false ,
+              "type" : "string"
+            } ,
+            "userkey" : {
+              "required" : false ,
+              "type" : "string"
+            } ,
+            "email" : {
+              "required" : false ,
+              "type" : "string"
+            } ,
+            "favorite" : {
+              "required" : false ,
+              "type" : "boolean"
+            }
+          }
+        }
+/phonebook: 
+  post: 
+    description: Adds entry to phonebook
+    queryParameters: 
+    body: 
+      application/json: 
+        schema: phonebookEntry
+        example: |
+          {
+            "id" : 123 ,
+            "title" : "str1234" ,
+            "firstName" : "str1234" ,
+            "lastName" : "str1234" ,
+            "phoneNumber" : "str1234" ,
+            "userkey" : "str1234" ,
+            "email" : "str1234" ,
+            "favorite" : true
+          }
+    responses: 
+      201: 
+        description: Created successfully
+  get: 
+    description: Returns list of entries matching the query
+    queryParameters: 
+      title: 
+      firstname: 
+      lastname: 
+      email: 
+    responses: 
+      200: 
+        description: OK
+        body: 
+          application/json: 
+            schema: phonebookEntries
+            example: |
+              {
+                "entries" : [
+                  {
+                    "id" : 123 ,
+                    "title" : "str1234" ,
+                    "firstName" : "str1234" ,
+                    "lastName" : "str1234" ,
+                    "phoneNumber" : "str1234" ,
+                    "userkey" : "str1234" ,
+                    "email" : "str1234" ,
+                    "favorite" : true
+                  } , {
+                    "id" : 123 ,
+                    "title" : "str1234" ,
+                    "firstName" : "str1234" ,
+                    "lastName" : "str1234" ,
+                    "phoneNumber" : "str1234" ,
+                    "userkey" : "str1234" ,
+                    "email" : "str1234" ,
+                    "favorite" : true
+                  }
+                ]
+              }
+      401: 
+        description: User not authorized
+        body: 
+          application/json: 
+  /favorites: 
+    get: 
+      description: Returns list of entries matching the query
+      queryParameters: 
+      responses: 
+        200: 
+          description: OK
+          body: 
+            application/json: 
+              schema: phonebookEntries
+              example: |
+                {
+                  "entries" : [
+                    {
+                      "id" : 123 ,
+                      "title" : "str1234" ,
+                      "firstName" : "str1234" ,
+                      "lastName" : "str1234" ,
+                      "phoneNumber" : "str1234" ,
+                      "userkey" : "str1234" ,
+                      "email" : "str1234" ,
+                      "favorite" : true
+                    } , {
+                      "id" : 123 ,
+                      "title" : "str1234" ,
+                      "firstName" : "str1234" ,
+                      "lastName" : "str1234" ,
+                      "phoneNumber" : "str1234" ,
+                      "userkey" : "str1234" ,
+                      "email" : "str1234" ,
+                      "favorite" : true
+                    }
+                  ]
+                }
+        401: 
+          description: User not authorized
+          body: 
+            application/json: 
+    /{id}: 
+      post: 
+        description: Sets the favorite status of an entry in the phonebook
+        queryParameters: 
+          setting: 
+        responses: 
+          201: 
+            description: Favorite set successfully
+          400: 
+            description: Bad arguments
+          404: 
+            description: Entry not found for given ID
+  /{id}: 
+    get: 
+      description: Returns entry with provided ID
+      queryParameters: 
+      responses: 
+        200: 
+          description: OK
+          body: 
+            application/json: 
+              schema: phonebookEntries
+              example: |
+                {
+                  "entries" : [
+                    {
+                      "id" : 123 ,
+                      "title" : "str1234" ,
+                      "firstName" : "str1234" ,
+                      "lastName" : "str1234" ,
+                      "phoneNumber" : "str1234" ,
+                      "userkey" : "str1234" ,
+                      "email" : "str1234" ,
+                      "favorite" : true
+                    } , {
+                      "id" : 123 ,
+                      "title" : "str1234" ,
+                      "firstName" : "str1234" ,
+                      "lastName" : "str1234" ,
+                      "phoneNumber" : "str1234" ,
+                      "userkey" : "str1234" ,
+                      "email" : "str1234" ,
+                      "favorite" : true
+                    }
+                  ]
+                }
+        401: 
+          description: User not authorized
+          body: 
+            application/json: 
+        404: 
+          description: Entry not found for given ID
+          body: 
+            application/json: 
+    put: 
+      description: Updates an existing entry in the phonebook
+      queryParameters: 
+      body: 
+        application/json: 
+          schema: phonebookEntry
+          example: |
+            {
+              "id" : 123 ,
+              "title" : "str1234" ,
+              "firstName" : "str1234" ,
+              "lastName" : "str1234" ,
+              "phoneNumber" : "str1234" ,
+              "userkey" : "str1234" ,
+              "email" : "str1234" ,
+              "favorite" : true
+            }
+      responses: 
+        204: 
+          description: OK
+        404: 
+          description: Entry not found for given ID
+    delete: 
+      description: Deletes an existing entry from the phonebook
+      queryParameters: 
+      responses: 
+        204: 
+          description: OK
+        404: 
+          description: Entry not found for given ID
+/user: 
+  post: 
+    description: Creates new user entry
+    responses: 
+      201: 
+        description: User created succesfully
+        body: 
+          application/json: 
