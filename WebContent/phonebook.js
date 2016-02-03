@@ -17,73 +17,99 @@
 angular.module('phonebook', [])
 
 .controller('PhonebookList', function($scope, $http, $location, $window) {
+  $scope.authkey = $location.search().key;
+  var id = 0;
+  $scope.auth = {
+    valid: false
+  };
+  $scope.entry = {
+    title: "",
+    firstName: "",
+    lastName: "",
+    phoneNumber: "",
+    email: ""
+  };
+  loadEntries();
 
-	var id = 0;
-	$scope.entry = {title : "", firstName : "", lastName : "", phoneNumber : "", email: ""};
+  function loadEntries() {
+    $http.get('api/v2/phonebook?Authorization=' + $scope.authkey).success(function(data) {
+      $scope.auth.valid = true;
+      $scope.entries = data.entries;
+    }).error(function(data, status) {
+      $scope.auth.valid = false;
+    });
+  }
 
-	$http.get('api/v2/phonebook').success(function(data) {
-		$scope.entries = data.entries;
-	});
+  $scope.loadKey = function() {
+    loadEntries();
+    $scope.attemptedLoad = true;
+  };
+  $scope.createKey = function() {
+    $http.post('api/v2/user', {}).then(function(data) {
+      $scope.authkey = data.data.userkey;
+      loadEntries();
+    });
+  };
 
-	$scope.loadEntry = function() {
+  $scope.loadEntry = function() {
+    if (id) {
+      $http.get('api/v2/phonebook/' + id + "?Authorization=" + $scope.authkey).success(function(data) {
+        $scope.entry = data;
+      });
+    } else {
+      $scope.entry = {
+        title: "",
+        firstName: "",
+        lastName: "",
+        phoneNumber: "",
+        email: ""
+      };
+    }
 
-		if (id) {
-			$http.get('api/v2/phonebook/' + id).success(function(data) {
-				$scope.entry = data;
-			});
-		} else {
-			$scope.entry = {title : "", firstName : "", lastName : "", phoneNumber : "", email : ""};
-		}
+  };
 
-	};
+  $scope.setId = function(_id) {
+    id = _id;
+  };
 
-	$scope.setId = function(_id) {
-		console.log("id");
-		id = _id;
-	};
+  $scope.setFavorite = function(setting) {
+    if (id) {
+      $http.post('api/v2/phonebook/favorites/' + id + '?Authorization=' + $scope.authkey + '&setting=' + setting).then(function(data) {
+        loadEntries();
+      });
+    } else {}
+  };
 
-	$scope.setFavorite = function(setting) {
-		console.log("set");
-		if (id) {
-			console.log("id set to"+id);
-			$http.post('api/v2/phonebook/favorites/' +id+'?setting='+setting).then(function(data) {
-				$window.location.reload();
-			});
-		} else {
-			console.log("id not set");
-		}
-	};
+  $scope.remove = function() {
 
-	$scope.remove = function() {
+    $http['delete']('api/v2/phonebook/' + id + "?Authorization=" + $scope.authkey).then(function(data) {
+      loadEntries();
+    });
 
-		$http['delete']('api/v2/phonebook/' + id).then(function(data) {
-			$window.location.reload();
-		});
+  };
 
-	};
-
-	$scope.submit = function() {
-		if (id) {
-			$http.put('api/v2/phonebook/' + id, {
-				title : $scope.entry.title,
-				firstName : $scope.entry.firstName,
-				lastName : $scope.entry.lastName,
-				phoneNumber : $scope.entry.phoneNumber,
-				email : $scope.entry.email
-			}).then(function(data) {
-				$window.location.reload();
-			});
-		} else {
-			$http.post('api/v2/phonebook', {
-				title : $scope.entry.title,
-				firstName : $scope.entry.firstName,
-				lastName : $scope.entry.lastName,
-				phoneNumber : $scope.entry.phoneNumber,
-				email : $scope.entry.email
-			}).then(function(data) {
-				$window.location.reload();
-			});
-		}
-	};
+  $scope.submit = function() {
+    if (id) {
+      $http.put('api/v2/phonebook/' + id + "?Authorization=" + $scope.authkey, {
+        title: $scope.entry.title,
+        firstName: $scope.entry.firstName,
+        lastName: $scope.entry.lastName,
+        phoneNumber: $scope.entry.phoneNumber,
+        email: $scope.entry.email
+      }).then(function(data) {
+        loadEntries();
+      });
+    } else {
+      $http.post('api/v2/phonebook?Authorization=' + $scope.authkey, {
+        title: $scope.entry.title,
+        firstName: $scope.entry.firstName,
+        lastName: $scope.entry.lastName,
+        phoneNumber: $scope.entry.phoneNumber,
+        email: $scope.entry.email
+      }).then(function(data) {
+        loadEntries();
+      });
+    }
+  };
 
 });
