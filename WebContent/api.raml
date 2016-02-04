@@ -177,7 +177,6 @@ schemas:
         description: User not authorized
   get: 
     description: Returns list of entries matching the query
-    displayName: getFavorites
     displayName: queryPhonebook
     queryParameters: 
       title: 
@@ -218,9 +217,8 @@ schemas:
         description: User not authorized
   /favorites: 
     get: 
-      description: Returns list of entries matching the query
+      description: Returns list of favorite entries
       displayName: getFavorites
-      displayName: queryPhonebook
       queryParameters: 
       responses: 
         200: 

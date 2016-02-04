@@ -40,7 +40,7 @@ if ! grep -q "securitySchemes" "${TARGET_FILE}"; then
 	addDisplayName "Updates an existing entry in the phonebook" "update"
 	addDisplayName "Deletes an existing entry from the phonebook" "deleteEntry"
 	addDisplayName "Creates new user entry" "createUser"
-	addDisplayName "Returns list of entries matching the query" "getFavorites"
+	addDisplayName "Returns list of favorite entries" "getFavorites"
 	addDisplayName "Sets the favorite status of an entry in the phonebook" "setFavorite"
 
 	# Remove "headers:\nAuthorization:" from the parameters

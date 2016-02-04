@@ -131,7 +131,7 @@ public class PhonebookServiceHandler implements ReaderListener {
     @GET
     @Path("phonebook/favorites")
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Returns list of entries matching the query")
+    @ApiOperation(value = "Returns list of favorite entries")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = PhonebookEntries.class),
             @ApiResponse(code = 401, message = "User not authorized") })
     public PhonebookEntries getFavorites(
