@@ -37,12 +37,13 @@ angular.module('phonebook', [])
       $scope.entries = data.entries;
     }).error(function(data, status) {
       $scope.auth.valid = false;
+      $scope.attemptFailed = true;
     });
   }
 
   $scope.loadKey = function() {
+    $scope.attemptFailed = false;
     loadEntries();
-    $scope.attemptedLoad = true;
   };
   $scope.createKey = function() {
     $http.post('api/v2/user', {}).then(function(data) {
