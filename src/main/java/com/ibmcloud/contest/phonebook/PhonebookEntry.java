@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import io.swagger.annotations.ApiModelProperty;
 
 @Entity
 @Table(name = "phonebook")
@@ -117,7 +119,8 @@ public class PhonebookEntry {
 
     @Basic
     @Column(name = "USERKEY")
-    @XmlElement(name = "userkey")
+    @XmlTransient
+    @ApiModelProperty(hidden = true)
     String userkey;
 
     @Basic
