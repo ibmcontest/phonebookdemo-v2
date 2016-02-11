@@ -141,6 +141,30 @@ schemas:
             }
           }
         }
+  - userEntry-xml: |
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        
+          <xs:element name="userEntry" type="userEntry"/>
+        
+          <xs:complexType name="userEntry">
+            <xs:sequence>
+              <xs:element name="userkey" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:schema>
+  - userEntry: |
+        {
+          "$schema" : "http://json-schema.org/draft-03/schema" ,
+          "type" : "object" ,
+          "required" : true ,
+          "properties" : {
+            "userkey" : {
+              "required" : false ,
+              "type" : "string"
+            }
+          }
+        }
 /phonebook: 
   post: 
     description: Adds entry to phonebook
@@ -205,7 +229,6 @@ schemas:
   /favorites: 
     get: 
       description: Returns list of favorite entries
-      displayName: getFavorites
       queryParameters: 
       responses: 
         200: 
@@ -240,7 +263,6 @@ schemas:
     /{id}: 
       post: 
         description: Sets the favorite status of an entry in the phonebook
-        displayName: setFavorite
         queryParameters: 
           setting: 
         responses: 
@@ -333,3 +355,4 @@ schemas:
         description: User created successfully
         body: 
           application/json: 
+            schema: userEntry
