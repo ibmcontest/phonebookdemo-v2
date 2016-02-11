@@ -229,6 +229,7 @@ schemas:
   /favorites: 
     get: 
       description: Returns list of favorite entries
+      displayName: getFavorites
       queryParameters: 
       responses: 
         200: 
@@ -263,6 +264,7 @@ schemas:
     /{id}: 
       post: 
         description: Sets the favorite status of an entry in the phonebook
+        displayName: setFavorite
         queryParameters: 
           setting: 
         responses: 
