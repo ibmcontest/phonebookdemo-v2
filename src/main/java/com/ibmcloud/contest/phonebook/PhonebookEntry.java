@@ -93,7 +93,7 @@ public class PhonebookEntry {
     @Id
     // Primary Key
     @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @XmlElement(name = "id")
     long id;
 
