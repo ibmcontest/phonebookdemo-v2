@@ -19,8 +19,8 @@
 			         <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/db?relaxAutoCommit=true" />
 			-->
 			<!-- UNCOMMENT this to deploy locally 
-			<property name="javax.persistence.jdbc.driver" value="com.ibm.DB2.jcc.DB2Driver" />
-        	<property name="javax.persistence.jdbc.url" value="jdbc:db2://hostname:port/dbname" />
+			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
+        	<property name="javax.persistence.jdbc.url" value="jdbc:mysql://hostname:port/dbname?relaxAutoCommit=true" />
         	<property name="javax.persistence.jdbc.user" value="dbuser" />
         	<property name="javax.persistence.jdbc.password" value="dbpassword" />
 			-->
