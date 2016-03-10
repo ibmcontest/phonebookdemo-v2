@@ -204,4 +204,22 @@ public class PhonebookEntry {
                 && this.email == other.getEmail());
     }
 
+    public void fillNulls() {
+        if (title == null) {
+            title = ""; //$NON-NLS-1$
+        }
+        if (firstName == null) {
+            firstName = ""; //$NON-NLS-1$
+        }
+        if (lastName == null) {
+            lastName = ""; //$NON-NLS-1$
+        }
+        if (phoneNumber == null) {
+            phoneNumber = ""; //$NON-NLS-1$
+        }
+        if (email == null) {
+            email = ""; //$NON-NLS-1$
+        }
+    }
+
 }

@@ -178,6 +178,11 @@ public class PhonebookServiceHandlerTest {
         assertEquals(true, entries.getEntries().get(0).equals(entry1));
     }
 
+    @Test(expected = UnauthorizedException.class)
+    public void getFavoritesUnauthorized() throws Exception {
+        phonebookServiceHandler.getFavorites(USERKEY);
+    }
+
     @Test
     public void getEntry() throws Exception {
 
@@ -219,6 +224,12 @@ public class PhonebookServiceHandlerTest {
     @Test(expected = UnauthorizedException.class)
     public void getEntryUnauthorized() throws Exception {
         phonebookServiceHandler.getEntry(USERKEY, "10000");
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void getEntryBadId() throws Exception {
+        addUser(new UserEntry(USERKEY));
+        phonebookServiceHandler.getEntry(USERKEY, "blah");
     }
 
     @Test
@@ -281,6 +292,12 @@ public class PhonebookServiceHandlerTest {
         phonebookServiceHandler.setFavorite(USERKEY, "10000", "true");
     }
 
+    @Test(expected = NotFoundException.class)
+    public void setFavoriteBadId() throws Exception {
+        addUser(new UserEntry(USERKEY));
+        phonebookServiceHandler.setFavorite(USERKEY, "blah", "true");
+    }
+
     @Test(expected = BadRequestException.class)
     public void setFavoriteBadArgument() throws Exception {
 
@@ -326,6 +343,13 @@ public class PhonebookServiceHandlerTest {
                 new PhonebookEntry("Mr", "Jack", "Doe", "12345", "jdoe@email.com"));
     }
 
+    @Test(expected = NotFoundException.class)
+    public void updateBadId() throws Exception {
+        addUser(new UserEntry(USERKEY));
+        phonebookServiceHandler.update(USERKEY, "blah",
+                new PhonebookEntry("Mr", "Jack", "Doe", "12345", "email"));
+    }
+
     @Test
     public void deleteEntry() throws Exception {
 
@@ -366,6 +390,12 @@ public class PhonebookServiceHandlerTest {
     @Test(expected = UnauthorizedException.class)
     public void deleteEntryUnauthorized() throws Exception {
         phonebookServiceHandler.deleteEntry(USERKEY, "10000");
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void deleteEntryBadId() throws Exception {
+        addUser(new UserEntry(USERKEY));
+        phonebookServiceHandler.deleteEntry(USERKEY, "blah");
     }
 
 }
